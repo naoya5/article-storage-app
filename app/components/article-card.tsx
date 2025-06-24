@@ -3,6 +3,19 @@
 import { formatDistanceToNow } from "date-fns"
 import { ja } from "date-fns/locale"
 import Image from "next/image"
+import { ArticleGenreSelector } from "./article-genre-selector"
+
+interface Genre {
+  id: string
+  name: string
+  color: string
+}
+
+interface ArticleGenre {
+  id: string
+  genreId: string
+  genre: Genre
+}
 
 interface Article {
   id: string
@@ -14,10 +27,12 @@ interface Article {
   publishedAt?: Date | null
   thumbnail?: string | null
   createdAt: Date
+  articleGenres?: ArticleGenre[]
 }
 
 interface ArticleCardProps {
   article: Article
+  onGenresChange?: () => void
 }
 
 const platformConfig = {
@@ -41,7 +56,7 @@ const platformConfig = {
   }
 } as const
 
-export function ArticleCard({ article }: ArticleCardProps) {
+export function ArticleCard({ article, onGenresChange }: ArticleCardProps) {
   const platform = platformConfig[article.platform]
   
   return (
@@ -90,6 +105,17 @@ export function ArticleCard({ article }: ArticleCardProps) {
           <p className="text-gray-600 text-sm mb-3 line-clamp-3">
             {article.description}
           </p>
+        )}
+
+        {/* ジャンル */}
+        {onGenresChange && (
+          <div className="mb-3">
+            <ArticleGenreSelector
+              articleId={article.id}
+              currentGenres={article.articleGenres || []}
+              onGenresChange={onGenresChange}
+            />
+          </div>
         )}
 
         {/* 著者と公開日 */}

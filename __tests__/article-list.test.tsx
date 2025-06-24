@@ -84,17 +84,33 @@ describe('ArticleList Tests', () => {
         author: 'Test Author',
         publishedAt: new Date('2023-12-01'),
         thumbnail: 'https://example.com/image.jpg',
-        createdAt: new Date('2023-12-01')
+        createdAt: new Date('2023-12-01'),
+        articleGenres: []
       }
     ]
 
-    vi.mocked(fetch).mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve({
-        articles: mockArticles,
-        pagination: { page: 1, limit: 6, total: 1, pages: 1 }
-      })
-    } as Response)
+    // 記事一覧取得のモック
+    vi.mocked(fetch).mockImplementation((url) => {
+      if (url === '/api/articles?page=1&limit=6') {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({
+            articles: mockArticles,
+            pagination: { page: 1, limit: 6, total: 1, pages: 1 }
+          })
+        } as Response)
+      }
+      
+      // ジャンル取得のモック
+      if (url === '/api/genres') {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({ genres: [] })
+        } as Response)
+      }
+      
+      return Promise.reject(new Error('Unknown URL'))
+    })
 
     render(<ArticleList />)
     
@@ -109,16 +125,30 @@ describe('ArticleList Tests', () => {
       title: `Test Article ${i + 1}`,
       url: `https://zenn.dev/test/articles/test-${i + 1}`,
       platform: 'ZENN' as const,
-      createdAt: new Date()
+      createdAt: new Date(),
+      articleGenres: []
     }))
 
-    vi.mocked(fetch).mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve({
-        articles: mockArticles,
-        pagination: { page: 1, limit: 6, total: 12, pages: 2 }
-      })
-    } as Response)
+    vi.mocked(fetch).mockImplementation((url) => {
+      if (url === '/api/articles?page=1&limit=6') {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({
+            articles: mockArticles,
+            pagination: { page: 1, limit: 6, total: 12, pages: 2 }
+          })
+        } as Response)
+      }
+      
+      if (url === '/api/genres') {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({ genres: [] })
+        } as Response)
+      }
+      
+      return Promise.reject(new Error('Unknown URL'))
+    })
 
     render(<ArticleList />)
     
@@ -130,24 +160,37 @@ describe('ArticleList Tests', () => {
 
   test('Refreshes when refreshKey changes', async () => {
     const mockFetch = vi.mocked(fetch)
-    mockFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve({
-        articles: [],
-        pagination: { page: 1, limit: 6, total: 0, pages: 0 }
-      })
-    } as Response)
+    mockFetch.mockImplementation((url) => {
+      if (url === '/api/articles?page=1&limit=6') {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({
+            articles: [],
+            pagination: { page: 1, limit: 6, total: 0, pages: 0 }
+          })
+        } as Response)
+      }
+      
+      if (url === '/api/genres') {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({ genres: [] })
+        } as Response)
+      }
+      
+      return Promise.reject(new Error('Unknown URL'))
+    })
 
     const { rerender } = render(<ArticleList refreshKey={1} />)
     
     await waitFor(() => {
-      expect(mockFetch).toHaveBeenCalledTimes(1)
+      expect(mockFetch).toHaveBeenCalledWith('/api/articles?page=1&limit=6')
     })
 
     rerender(<ArticleList refreshKey={2} />)
     
     await waitFor(() => {
-      expect(mockFetch).toHaveBeenCalledTimes(2)
+      expect(mockFetch).toHaveBeenCalledTimes(2) // 再レンダリング時にAPIが再呼び出しされる
     })
   })
 })
@@ -166,7 +209,8 @@ describe('ArticleCard Tests', () => {
     author: 'Test Author',
     publishedAt: new Date('2023-12-01'),
     thumbnail: 'https://example.com/image.jpg',
-    createdAt: new Date('2023-12-01')
+    createdAt: new Date('2023-12-01'),
+    articleGenres: []
   }
 
   test('Renders article information correctly', () => {
@@ -201,7 +245,8 @@ describe('ArticleCard Tests', () => {
       title: 'Minimal Article',
       url: 'https://twitter.com/user/status/123',
       platform: 'TWITTER' as const,
-      createdAt: new Date('2023-12-01')
+      createdAt: new Date('2023-12-01'),
+      articleGenres: []
     }
 
     const { container } = render(<ArticleCard article={minimalArticle} />)
@@ -215,7 +260,7 @@ describe('ArticleCard Tests', () => {
     
     platforms.forEach((platform, index) => {
       document.body.innerHTML = ''
-      const article = { ...mockArticle, platform, id: `test-${index}` }
+      const article = { ...mockArticle, platform, id: `test-${index}`, articleGenres: [] }
       const { container } = render(<ArticleCard article={article} />)
       
       expect(container.textContent).toContain(

@@ -3,6 +3,18 @@
 import { useState, useEffect } from "react"
 import { ArticleCard } from "./article-card"
 
+interface Genre {
+  id: string
+  name: string
+  color: string
+}
+
+interface ArticleGenre {
+  id: string
+  genreId: string
+  genre: Genre
+}
+
 interface Article {
   id: string
   title: string
@@ -13,6 +25,7 @@ interface Article {
   publishedAt?: Date | null
   thumbnail?: string | null
   createdAt: Date
+  articleGenres?: ArticleGenre[]
 }
 
 interface Pagination {
@@ -108,7 +121,11 @@ export function ArticleList({ refreshKey }: ArticleListProps) {
       {/* 記事カード */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
         {articles.map((article) => (
-          <ArticleCard key={article.id} article={article} />
+          <ArticleCard 
+            key={article.id} 
+            article={article} 
+            onGenresChange={() => fetchArticles(currentPage)}
+          />
         ))}
       </div>
 
