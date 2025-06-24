@@ -1,0 +1,181 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// NextAuth.js用テーブル
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts  Account[]
+  sessions  Session[]
+  articles  Article[]
+  genres    Genre[]
+  tags      Tag[]
+  bookmarks Bookmark[]
+
+  @@map("users")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// アプリケーション独自のテーブル
+model Article {
+  id          String    @id @default(cuid())
+  url         String    @unique
+  title       String
+  description String?   @db.Text
+  author      String?
+  publishedAt DateTime?
+  platform    Platform
+  thumbnail   String?
+  content     String?   @db.Text
+  userId      String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  articleGenres ArticleGenre[]
+  articleTags   ArticleTag[]
+  bookmarks     Bookmark[]
+
+  @@index([userId])
+  @@index([platform])
+  @@map("articles")
+}
+
+model Genre {
+  id        String   @id @default(cuid())
+  name      String
+  color     String   @default("#3b82f6")
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  articleGenres ArticleGenre[]
+
+  @@unique([name, userId])
+  @@map("genres")
+}
+
+model Tag {
+  id        String   @id @default(cuid())
+  name      String
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  articleTags ArticleTag[]
+
+  @@unique([name, userId])
+  @@map("tags")
+}
+
+model ArticleGenre {
+  articleId String
+  genreId   String
+
+  article Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  genre   Genre   @relation(fields: [genreId], references: [id], onDelete: Cascade)
+
+  @@id([articleId, genreId])
+  @@map("article_genres")
+}
+
+model ArticleTag {
+  articleId String
+  tagId     String
+
+  article Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  tag     Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([articleId, tagId])
+  @@map("article_tags")
+}
+
+model Bookmark {
+  id         String      @id @default(cuid())
+  articleId  String
+  userId     String
+  isFavorite Boolean     @default(false)
+  readStatus ReadStatus  @default(UNREAD)
+  rating     Int?        @db.SmallInt
+  memo       String?     @db.Text
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  article Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([articleId, userId])
+  @@index([userId])
+  @@map("bookmarks")
+}
+
+// Enums
+enum Platform {
+  TWITTER
+  ZENN
+  QIITA
+}
+
+enum ReadStatus {
+  UNREAD
+  READ
+  READ_LATER
+}

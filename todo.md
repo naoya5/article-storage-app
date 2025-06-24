@@ -17,13 +17,19 @@ Twitter、Zenn、Qiitaから記事をストックして検索、ブックマー�
     - Vitestベースのテスト環境構築（vitest.config.ts, vitest.setup.ts作成）
     - 環境変数テンプレート作成（データベースURL、NextAuth設定）
     - 開発環境セットアップのテストを作成し、全テスト通過を確認
-  - コミット: 
+  - コミット: 0f3e22d 
 
-- [ ] **データベース設計・セットアップ**
-  - [ ] Prismaスキーマ定義
-  - [ ] データベース初期化
-  - [ ] 基本的なCRUD操作のテスト
+- [x] **データベース設計・セットアップ**
+  - [x] Prismaスキーマ定義
+  - [x] Prismaクライアント初期化
+  - [x] データベースライブラリ作成とテスト実装
   - 実施内容:
+    - NextAuth.js用テーブル (User, Account, Session, VerificationToken) 定義
+    - アプリケーション用テーブル (Article, Genre, Tag, Bookmark, ArticleGenre, ArticleTag) 定義
+    - Platform enum (TWITTER, ZENN, QIITA) と ReadStatus enum (UNREAD, READ, READ_LATER) 定義
+    - インデックスとリレーション設定、適切なカスケード削除設定
+    - lib/prisma.ts でPrismaクライアントセットアップ
+    - データベーススキーマテスト実装、全テスト通過確認
   - コミット:
 
 #### 🔐 認証機能
