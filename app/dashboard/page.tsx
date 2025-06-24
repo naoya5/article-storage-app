@@ -2,11 +2,12 @@
 
 import { useSession } from "next-auth/react"
 import { AddArticleForm } from "../components/add-article-form"
+import { ArticleList } from "../components/article-list"
 import { useState } from "react"
 
 export default function DashboardPage() {
   const { data: session, status } = useSession()
-  const [, setRefreshKey] = useState(0)
+  const [refreshKey, setRefreshKey] = useState(0)
 
   if (status === "loading") {
     return (
@@ -54,12 +55,8 @@ export default function DashboardPage() {
           {/* メインコンテンツエリア */}
           <div className="lg:col-span-2">
             <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-semibold mb-4">記事一覧</h2>
-              <div className="text-gray-600 text-center py-8">
-                記事一覧機能は実装中です...
-                <br />
-                記事を追加してお試しください！
-              </div>
+              <h2 className="text-xl font-semibold mb-6">記事一覧</h2>
+              <ArticleList refreshKey={refreshKey} />
             </div>
           </div>
         </div>
