@@ -2,6 +2,7 @@
 
 import { useSession, signIn, signOut } from "next-auth/react"
 import Image from "next/image"
+import Link from "next/link"
 
 export function AuthButton() {
   const { data: session, status } = useSession()
@@ -31,6 +32,12 @@ export function AuthButton() {
             {session.user?.name || session.user?.email}
           </span>
         </div>
+        <Link
+          href="/dashboard"
+          className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        >
+          ダッシュボード
+        </Link>
         <button
           onClick={() => signOut()}
           className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
