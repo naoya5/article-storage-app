@@ -8,11 +8,15 @@ Twitter、Zenn、Qiitaから記事をストックして検索、ブックマー�
 ### Phase 1: MVP機能 (最小限の動作可能な製品)
 
 #### 🔧 開発環境・基盤整備
-- [ ] **開発環境セットアップ**
-  - [ ] 必要な依存関係の追加 (Prisma, NextAuth.js, shadcn/ui等)
-  - [ ] ESLint/Prettier設定の調整
-  - [ ] 環境変数設定
+- [x] **開発環境セットアップ**
+  - [x] 必要な依存関係の追加 (Prisma, NextAuth.js, shadcn/ui等)
+  - [x] Vitestテスト環境セットアップ  
+  - [x] 環境変数設定(.env.local, .env.example)
   - 実施内容: 
+    - Prisma, NextAuth.js, @auth/prisma-adapter, bcryptjs等の主要依存関係をインストール
+    - Vitestベースのテスト環境構築（vitest.config.ts, vitest.setup.ts作成）
+    - 環境変数テンプレート作成（データベースURL、NextAuth設定）
+    - 開発環境セットアップのテストを作成し、全テスト通過を確認
   - コミット: 
 
 - [ ] **データベース設計・セットアップ**
