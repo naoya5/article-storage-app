@@ -6,6 +6,9 @@ import { detectPlatform, isValidUrl, isSupportedPlatform } from "@/lib/platform-
 import { extractMetadata } from "@/lib/metadata-extractor"
 import { Platform } from "@prisma/client"
 
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
+
 export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions)
