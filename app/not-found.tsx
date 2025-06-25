@@ -1,37 +1,75 @@
-import Link from 'next/link'
-
 export default function NotFound() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-md mx-auto text-center">
-        <div className="mb-8">
-          <h1 className="text-6xl font-bold text-gray-900 mb-4">404</h1>
-          <h2 className="text-2xl font-semibold text-gray-700 mb-4">
-            ページが見つかりません
-          </h2>
-          <p className="text-gray-600 mb-8">
-            お探しのページは存在しないか、移動された可能性があります。
-          </p>
-        </div>
-        
-        <div className="space-y-4">
-          <Link
-            href="/dashboard"
-            className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
-          >
-            ダッシュボードに戻る
-          </Link>
-          
-          <div>
-            <Link
-              href="/"
-              className="text-blue-600 hover:text-blue-800 font-medium"
-            >
-              ホームページに戻る
-            </Link>
+    <html>
+      <body>
+        <div style={{
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: '#f9fafb',
+          fontFamily: 'system-ui, -apple-system, sans-serif'
+        }}>
+          <div style={{
+            maxWidth: '400px',
+            textAlign: 'center',
+            padding: '2rem'
+          }}>
+            <h1 style={{
+              fontSize: '4rem',
+              fontWeight: 'bold',
+              color: '#111827',
+              marginBottom: '1rem'
+            }}>404</h1>
+            <h2 style={{
+              fontSize: '1.5rem',
+              fontWeight: '600',
+              color: '#374151',
+              marginBottom: '1rem'
+            }}>
+              ページが見つかりません
+            </h2>
+            <p style={{
+              color: '#6b7280',
+              marginBottom: '2rem'
+            }}>
+              お探しのページは存在しないか、移動された可能性があります。
+            </p>
+            
+            <div style={{ marginBottom: '1rem' }}>
+              {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+              <a
+                href="/dashboard"
+                style={{
+                  display: 'inline-block',
+                  backgroundColor: '#2563eb',
+                  color: 'white',
+                  padding: '12px 24px',
+                  borderRadius: '8px',
+                  textDecoration: 'none',
+                  fontWeight: '500'
+                }}
+              >
+                ダッシュボードに戻る
+              </a>
+            </div>
+            
+            <div>
+              {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+              <a
+                href="/"
+                style={{
+                  color: '#2563eb',
+                  textDecoration: 'none',
+                  fontWeight: '500'
+                }}
+              >
+                ホームページに戻る
+              </a>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
+      </body>
+    </html>
   )
 }
