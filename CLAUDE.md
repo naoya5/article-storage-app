@@ -23,13 +23,15 @@ npm run lint
 This is a Next.js 15 application using the App Router architecture with TypeScript and Tailwind CSS v4.
 
 ### Key Technologies
+
 - **Next.js 15** with App Router
-- **React 19** 
+- **React 19**
 - **TypeScript** with strict mode enabled
 - **Tailwind CSS v4** for styling
 - **ESLint** with Next.js TypeScript rules
 
 ### Architecture Overview
+
 - **App Directory**: All routes and layouts are in `/app/`
 - **Layout System**: Root layout in `app/layout.tsx` uses Geist fonts
 - **Path Aliases**: `@/*` maps to project root (configured in tsconfig.json)
@@ -37,6 +39,7 @@ This is a Next.js 15 application using the App Router architecture with TypeScri
 - **Fonts**: Geist Sans and Geist Mono from next/font/google
 
 ### Configuration Files
+
 - `next.config.ts`: Next.js configuration (currently minimal)
 - `tsconfig.json`: TypeScript with Next.js plugin and strict settings
 - `eslint.config.mjs`: ESLint with Next.js core-web-vitals and TypeScript rules
@@ -49,3 +52,7 @@ This is a Next.js 15 application using the App Router architecture with TypeScri
 - ESLint is configured for Next.js with TypeScript support
 - Use the `@/` path alias for imports from the project root
 - Components are expected to follow Next.js App Router conventions
+
+## nextauth のコードをいじるときは必ず nextauth の公式ドキュメントを参照してください以下のリンクが公式ドキュメントです
+
+https://next-auth.js.org/configuration/options
