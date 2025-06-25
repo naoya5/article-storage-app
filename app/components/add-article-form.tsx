@@ -29,6 +29,27 @@ export function AddArticleForm({ onArticleAdded }: AddArticleFormProps) {
       return
     }
 
+    // URL形式の基本チェック
+    try {
+      new URL(url.trim())
+    } catch {
+      setMessage({ type: 'error', text: '有効なURLを入力してください（例: https://zenn.dev/...）' })
+      return
+    }
+
+    // サポート対象プラットフォームの事前チェック
+    const supportedDomains = ['twitter.com', 'x.com', 'zenn.dev', 'qiita.com']
+    const urlObj = new URL(url.trim())
+    const hostname = urlObj.hostname.toLowerCase().replace('www.', '')
+    
+    if (!supportedDomains.includes(hostname)) {
+      setMessage({ 
+        type: 'error', 
+        text: 'Twitter(X)、Zenn、Qiitaの記事URLのみ対応しています' 
+      })
+      return
+    }
+
     setIsLoading(true)
     setMessage(null)
 
@@ -83,7 +104,13 @@ export function AddArticleForm({ onArticleAdded }: AddArticleFormProps) {
             disabled={isLoading}
           />
           <p className="text-sm text-gray-500 mt-1">
-            Twitter、Zenn、QiitaのURLを入力してください
+            対応プラットフォーム：
+            <span className="font-medium">Twitter(X)</span>、
+            <span className="font-medium">Zenn</span>、
+            <span className="font-medium">Qiita</span>
+          </p>
+          <p className="text-xs text-gray-400 mt-1">
+            例：https://zenn.dev/author/articles/title
           </p>
         </div>
 

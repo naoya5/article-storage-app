@@ -122,13 +122,21 @@ export function ArticleTagSelector({
         ))}
         
         {/* タグ追加ボタン */}
-        {availableToAdd.length > 0 && (
+        {availableToAdd.length > 0 ? (
           <button
             onClick={() => setShowSelector(!showSelector)}
             className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium text-gray-600 bg-gray-50 hover:bg-gray-100 transition-colors border border-gray-200"
           >
             + タグ追加
           </button>
+        ) : availableTags.length === 0 ? (
+          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs text-gray-400 bg-gray-50 border border-gray-200">
+            タグ管理画面でタグを作成してください
+          </span>
+        ) : (
+          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs text-gray-400 bg-gray-50 border border-gray-200">
+            すべてのタグが追加済みです
+          </span>
         )}
       </div>
 

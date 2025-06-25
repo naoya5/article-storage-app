@@ -221,7 +221,7 @@ export function ArticleList({ refreshKey }: ArticleListProps) {
       />
 
       {/* 記事カード */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 lg:grid-cols-2">
         {articles.map((article) => (
           <ArticleCard 
             key={article.id} 

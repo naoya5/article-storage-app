@@ -50,7 +50,7 @@ export default function DashboardPage() {
 
       <main className="max-w-6xl mx-auto px-6 py-8">
         {/* タブナビゲーション */}
-        <div className="flex space-x-1 mb-6 bg-gray-100 p-1 rounded-lg w-fit">
+        <div className="flex flex-wrap sm:flex-nowrap space-x-1 mb-6 bg-gray-100 p-1 rounded-lg w-fit max-w-full overflow-x-auto">
           <button
             onClick={() => setActiveTab('articles')}
             className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
