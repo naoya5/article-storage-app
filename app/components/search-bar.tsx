@@ -18,6 +18,8 @@ interface SearchFilters {
   platform: string
   genreId: string
   tagId: string
+  dateFrom: string
+  dateTo: string
 }
 
 interface SearchBarProps {
@@ -37,11 +39,13 @@ export function SearchBar({
   const [platform, setPlatform] = useState('')
   const [genreId, setGenreId] = useState('')
   const [tagId, setTagId] = useState('')
+  const [dateFrom, setDateFrom] = useState('')
+  const [dateTo, setDateTo] = useState('')
   const [showFilters, setShowFilters] = useState(false)
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
-    onSearch({ query, platform, genreId, tagId })
+    onSearch({ query, platform, genreId, tagId, dateFrom, dateTo })
   }
 
   const handleReset = () => {
@@ -49,10 +53,12 @@ export function SearchBar({
     setPlatform('')
     setGenreId('')
     setTagId('')
-    onSearch({ query: '', platform: '', genreId: '', tagId: '' })
+    setDateFrom('')
+    setDateTo('')
+    onSearch({ query: '', platform: '', genreId: '', tagId: '', dateFrom: '', dateTo: '' })
   }
 
-  const hasFilters = platform || genreId || tagId
+  const hasFilters = platform || genreId || tagId || dateFrom || dateTo
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6 mb-6">
@@ -79,7 +85,7 @@ export function SearchBar({
                 : 'bg-gray-100 text-gray-600 border border-gray-200 hover:bg-gray-200'
             }`}
           >
-            フィルター {hasFilters && `(${[platform, genreId, tagId].filter(Boolean).length})`}
+            フィルター {hasFilters && `(${[platform, genreId, tagId, dateFrom, dateTo].filter(Boolean).length})`}
           </button>
           <button
             type="submit"
@@ -92,7 +98,8 @@ export function SearchBar({
 
         {/* 詳細フィルター */}
         {showFilters && (
-          <div className="grid md:grid-cols-3 gap-4 pt-4 border-t border-gray-200">
+          <div className="space-y-4 pt-4 border-t border-gray-200">
+            <div className="grid md:grid-cols-3 gap-4">
             {/* プラットフォーム */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -149,6 +156,36 @@ export function SearchBar({
                   </option>
                 ))}
               </select>
+            </div>
+            </div>
+
+            {/* 日付範囲フィルター */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                投稿日期間
+              </label>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">開始日</label>
+                  <input
+                    type="date"
+                    value={dateFrom}
+                    onChange={(e) => setDateFrom(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                    disabled={loading}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">終了日</label>
+                  <input
+                    type="date"
+                    value={dateTo}
+                    onChange={(e) => setDateTo(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                    disabled={loading}
+                  />
+                </div>
+              </div>
             </div>
           </div>
         )}

@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react"
 import { ArticleCard } from "./article-card"
 import { SearchBar } from "./search-bar"
+import { ReadStatus } from "@prisma/client"
 
 interface Genre {
   id: string
@@ -27,6 +28,17 @@ interface ArticleTag {
   tag: Tag
 }
 
+interface Bookmark {
+  id: string
+  userId: string
+  articleId: string
+  isFavorite: boolean
+  readStatus: ReadStatus
+  rating?: number | null
+  memo?: string | null
+  createdAt: Date
+}
+
 interface Article {
   id: string
   title: string
@@ -39,6 +51,7 @@ interface Article {
   createdAt: Date
   articleGenres?: ArticleGenre[]
   articleTags?: ArticleTag[]
+  bookmarks?: Bookmark[]
 }
 
 interface Pagination {
@@ -58,6 +71,8 @@ interface SearchFilters {
   platform: string
   genreId: string
   tagId: string
+  dateFrom: string
+  dateTo: string
 }
 
 interface ArticleListProps {
@@ -74,7 +89,9 @@ export function ArticleList({ refreshKey }: ArticleListProps) {
     query: '',
     platform: '',
     genreId: '',
-    tagId: ''
+    tagId: '',
+    dateFrom: '',
+    dateTo: ''
   })
   const [availableTags, setAvailableTags] = useState<Tag[]>([])
   const [availableGenres, setAvailableGenres] = useState<Genre[]>([])
@@ -95,6 +112,8 @@ export function ArticleList({ refreshKey }: ArticleListProps) {
       if (currentFilters.platform) params.append('platform', currentFilters.platform)
       if (currentFilters.genreId) params.append('genreId', currentFilters.genreId)
       if (currentFilters.tagId) params.append('tagId', currentFilters.tagId)
+      if (currentFilters.dateFrom) params.append('dateFrom', currentFilters.dateFrom)
+      if (currentFilters.dateTo) params.append('dateTo', currentFilters.dateTo)
       
       const response = await fetch(`/api/articles?${params.toString()}`)
       
@@ -180,7 +199,7 @@ export function ArticleList({ refreshKey }: ArticleListProps) {
     )
   }
 
-  const hasSearchFilters = searchFilters.query || searchFilters.platform || searchFilters.genreId || searchFilters.tagId
+  const hasSearchFilters = searchFilters.query || searchFilters.platform || searchFilters.genreId || searchFilters.tagId || searchFilters.dateFrom || searchFilters.dateTo
 
   if (!articles.length) {
     return (
@@ -228,6 +247,7 @@ export function ArticleList({ refreshKey }: ArticleListProps) {
             article={article} 
             onGenresChange={() => fetchArticles(currentPage)}
             onTagsChange={() => fetchArticles(currentPage)}
+            onBookmarkChange={() => fetchArticles(currentPage)}
           />
         ))}
       </div>

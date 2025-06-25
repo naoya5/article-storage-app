@@ -122,6 +122,8 @@ export async function GET(request: Request) {
     const query = searchParams.get('query')
     const genreId = searchParams.get('genreId')
     const tagId = searchParams.get('tagId')
+    const dateFrom = searchParams.get('dateFrom')
+    const dateTo = searchParams.get('dateTo')
 
     const skip = (page - 1) * limit
 
@@ -144,6 +146,12 @@ export async function GET(request: Request) {
       ...(tagId && {
         articleTags: {
           some: { tagId }
+        }
+      }),
+      ...((dateFrom || dateTo) && {
+        createdAt: {
+          ...(dateFrom && { gte: new Date(dateFrom) }),
+          ...(dateTo && { lte: new Date(new Date(dateTo).getTime() + 24 * 60 * 60 * 1000 - 1) })
         }
       })
     }
