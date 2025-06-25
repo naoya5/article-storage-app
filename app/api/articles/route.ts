@@ -116,12 +116,33 @@ export async function GET(request: Request) {
     const page = parseInt(searchParams.get('page') || '1')
     const limit = parseInt(searchParams.get('limit') || '10')
     const platform = searchParams.get('platform')
+    const query = searchParams.get('query')
+    const genreId = searchParams.get('genreId')
+    const tagId = searchParams.get('tagId')
 
     const skip = (page - 1) * limit
 
     const where = {
       userId: session.user.id,
-      ...(platform && { platform: platform as Platform })
+      ...(platform && { platform: platform as Platform }),
+      ...(query && {
+        OR: [
+          { title: { contains: query, mode: 'insensitive' } },
+          { description: { contains: query, mode: 'insensitive' } },
+          { content: { contains: query, mode: 'insensitive' } },
+          { author: { contains: query, mode: 'insensitive' } }
+        ]
+      }),
+      ...(genreId && {
+        articleGenres: {
+          some: { genreId }
+        }
+      }),
+      ...(tagId && {
+        articleTags: {
+          some: { tagId }
+        }
+      })
     }
 
     const [articles, total] = await Promise.all([

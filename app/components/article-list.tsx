@@ -1,7 +1,8 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { ArticleCard } from "./article-card"
+import { SearchBar } from "./search-bar"
 
 interface Genre {
   id: string
@@ -52,6 +53,13 @@ interface ArticleListResponse {
   pagination: Pagination
 }
 
+interface SearchFilters {
+  query: string
+  platform: string
+  genreId: string
+  tagId: string
+}
+
 interface ArticleListProps {
   refreshKey?: number
 }
@@ -62,13 +70,33 @@ export function ArticleList({ refreshKey }: ArticleListProps) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
+  const [searchFilters, setSearchFilters] = useState<SearchFilters>({
+    query: '',
+    platform: '',
+    genreId: '',
+    tagId: ''
+  })
+  const [availableTags, setAvailableTags] = useState<Tag[]>([])
+  const [availableGenres, setAvailableGenres] = useState<Genre[]>([])
+  const [searchLoading, setSearchLoading] = useState(false)
 
-  const fetchArticles = async (page: number = 1) => {
+  const fetchArticles = useCallback(async (page: number = 1, filters?: SearchFilters) => {
     try {
       setLoading(true)
       setError(null)
       
-      const response = await fetch(`/api/articles?page=${page}&limit=6`)
+      const params = new URLSearchParams({
+        page: page.toString(),
+        limit: '6'
+      })
+      
+      const currentFilters = filters || searchFilters
+      if (currentFilters.query) params.append('query', currentFilters.query)
+      if (currentFilters.platform) params.append('platform', currentFilters.platform)
+      if (currentFilters.genreId) params.append('genreId', currentFilters.genreId)
+      if (currentFilters.tagId) params.append('tagId', currentFilters.tagId)
+      
+      const response = await fetch(`/api/articles?${params.toString()}`)
       
       if (!response.ok) {
         if (response.status === 401) {
@@ -87,11 +115,44 @@ export function ArticleList({ refreshKey }: ArticleListProps) {
     } finally {
       setLoading(false)
     }
+  }, [searchFilters])
+
+  const fetchFilters = async () => {
+    try {
+      const [tagsResponse, genresResponse] = await Promise.all([
+        fetch('/api/tags'),
+        fetch('/api/genres')
+      ])
+      
+      if (tagsResponse.ok) {
+        const tagsData = await tagsResponse.json()
+        setAvailableTags(tagsData.tags)
+      }
+      
+      if (genresResponse.ok) {
+        const genresData = await genresResponse.json()
+        setAvailableGenres(genresData.genres)
+      }
+    } catch (err) {
+      console.error('Error fetching filters:', err)
+    }
   }
 
   useEffect(() => {
     fetchArticles(currentPage)
-  }, [currentPage, refreshKey])
+    fetchFilters()
+  }, [currentPage, refreshKey, fetchArticles])
+
+  const handleSearch = async (filters: SearchFilters) => {
+    setSearchFilters(filters)
+    setCurrentPage(1)
+    setSearchLoading(true)
+    try {
+      await fetchArticles(1, filters)
+    } finally {
+      setSearchLoading(false)
+    }
+  }
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page)
@@ -130,6 +191,14 @@ export function ArticleList({ refreshKey }: ArticleListProps) {
 
   return (
     <div>
+      {/* 検索バー */}
+      <SearchBar
+        onSearch={handleSearch}
+        loading={searchLoading}
+        availableTags={availableTags}
+        availableGenres={availableGenres}
+      />
+
       {/* 記事カード */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
         {articles.map((article) => (
