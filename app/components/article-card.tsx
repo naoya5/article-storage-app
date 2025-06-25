@@ -4,6 +4,7 @@ import { formatDistanceToNow } from "date-fns"
 import { ja } from "date-fns/locale"
 import Image from "next/image"
 import { ArticleGenreSelector } from "./article-genre-selector"
+import { ArticleTagSelector } from "./article-tag-selector"
 
 interface Genre {
   id: string
@@ -17,6 +18,17 @@ interface ArticleGenre {
   genre: Genre
 }
 
+interface Tag {
+  id: string
+  name: string
+}
+
+interface ArticleTag {
+  id: string
+  tagId: string
+  tag: Tag
+}
+
 interface Article {
   id: string
   title: string
@@ -28,11 +40,13 @@ interface Article {
   thumbnail?: string | null
   createdAt: Date
   articleGenres?: ArticleGenre[]
+  articleTags?: ArticleTag[]
 }
 
 interface ArticleCardProps {
   article: Article
   onGenresChange?: () => void
+  onTagsChange?: () => void
 }
 
 const platformConfig = {
@@ -56,7 +70,7 @@ const platformConfig = {
   }
 } as const
 
-export function ArticleCard({ article, onGenresChange }: ArticleCardProps) {
+export function ArticleCard({ article, onGenresChange, onTagsChange }: ArticleCardProps) {
   const platform = platformConfig[article.platform]
   
   return (
@@ -110,10 +124,23 @@ export function ArticleCard({ article, onGenresChange }: ArticleCardProps) {
         {/* ジャンル */}
         {onGenresChange && (
           <div className="mb-3">
+            <div className="text-xs text-gray-600 mb-1">ジャンル</div>
             <ArticleGenreSelector
               articleId={article.id}
               currentGenres={article.articleGenres || []}
               onGenresChange={onGenresChange}
+            />
+          </div>
+        )}
+
+        {/* タグ */}
+        {onTagsChange && (
+          <div className="mb-3">
+            <div className="text-xs text-gray-600 mb-1">タグ</div>
+            <ArticleTagSelector
+              articleId={article.id}
+              currentTags={article.articleTags || []}
+              onTagsChange={onTagsChange}
             />
           </div>
         )}

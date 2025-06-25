@@ -15,6 +15,17 @@ interface ArticleGenre {
   genre: Genre
 }
 
+interface Tag {
+  id: string
+  name: string
+}
+
+interface ArticleTag {
+  id: string
+  tagId: string
+  tag: Tag
+}
+
 interface Article {
   id: string
   title: string
@@ -26,6 +37,7 @@ interface Article {
   thumbnail?: string | null
   createdAt: Date
   articleGenres?: ArticleGenre[]
+  articleTags?: ArticleTag[]
 }
 
 interface Pagination {
@@ -125,6 +137,7 @@ export function ArticleList({ refreshKey }: ArticleListProps) {
             key={article.id} 
             article={article} 
             onGenresChange={() => fetchArticles(currentPage)}
+            onTagsChange={() => fetchArticles(currentPage)}
           />
         ))}
       </div>

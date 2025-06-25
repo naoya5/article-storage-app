@@ -4,12 +4,13 @@ import { useSession } from "next-auth/react"
 import { AddArticleForm } from "../components/add-article-form"
 import { ArticleList } from "../components/article-list"
 import { GenreManager } from "../components/genre-manager"
+import { TagManager } from "../components/tag-manager"
 import { useState } from "react"
 
 export default function DashboardPage() {
   const { data: session, status } = useSession()
   const [refreshKey, setRefreshKey] = useState(0)
-  const [activeTab, setActiveTab] = useState<'articles' | 'genres'>('articles')
+  const [activeTab, setActiveTab] = useState<'articles' | 'genres' | 'tags'>('articles')
 
   if (status === "loading") {
     return (
@@ -70,6 +71,16 @@ export default function DashboardPage() {
           >
             ジャンル管理
           </button>
+          <button
+            onClick={() => setActiveTab('tags')}
+            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+              activeTab === 'tags'
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            タグ管理
+          </button>
         </div>
 
         {activeTab === 'articles' ? (
@@ -87,9 +98,13 @@ export default function DashboardPage() {
               </div>
             </div>
           </div>
-        ) : (
+        ) : activeTab === 'genres' ? (
           <div className="bg-white rounded-lg shadow-md p-6">
             <GenreManager refreshKey={refreshKey} />
+          </div>
+        ) : (
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <TagManager refreshKey={refreshKey} />
           </div>
         )}
 
