@@ -180,11 +180,32 @@ export function ArticleList({ refreshKey }: ArticleListProps) {
     )
   }
 
+  const hasSearchFilters = searchFilters.query || searchFilters.platform || searchFilters.genreId || searchFilters.tagId
+
   if (!articles.length) {
     return (
-      <div className="text-center py-12 text-gray-600">
-        <div className="mb-4">まだ記事が登録されていません</div>
-        <div className="text-sm">記事を追加してお試しください！</div>
+      <div>
+        {/* 検索バー */}
+        <SearchBar
+          onSearch={handleSearch}
+          loading={searchLoading}
+          availableTags={availableTags}
+          availableGenres={availableGenres}
+        />
+        
+        <div className="text-center py-12 text-gray-600">
+          {hasSearchFilters ? (
+            <div>
+              <div className="mb-4">検索条件に一致する記事が見つかりませんでした</div>
+              <div className="text-sm">検索条件を変更してお試しください</div>
+            </div>
+          ) : (
+            <div>
+              <div className="mb-4">まだ記事が登録されていません</div>
+              <div className="text-sm">記事を追加してお試しください！</div>
+            </div>
+          )}
+        </div>
       </div>
     )
   }

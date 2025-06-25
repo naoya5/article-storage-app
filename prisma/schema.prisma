@@ -94,6 +94,8 @@ model Article {
 
   @@index([userId])
   @@index([platform])
+  @@index([title])
+  @@index([createdAt])
   @@map("articles")
 }
 

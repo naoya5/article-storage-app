@@ -11,11 +11,17 @@ export interface ArticleMetadata {
 
 export async function extractMetadata(url: string): Promise<ArticleMetadata> {
   try {
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), 10000) // 10秒タイムアウト
+    
     const response = await fetch(url, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-      }
+      },
+      signal: controller.signal
     })
+    
+    clearTimeout(timeout)
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)
