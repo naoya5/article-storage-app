@@ -24,10 +24,6 @@ if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
   );
 }
 
-const vercelUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : process.env.NEXTAUTH_URL;
-
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers,
@@ -37,9 +33,10 @@ export const authOptions: NextAuthOptions = {
     updateAge: 24 * 60 * 60, // 24 hours
   },
   secret: process.env.NEXTAUTH_SECRET,
-  ...(vercelUrl && {
-    url: vercelUrl,
-  }),
+  pages: {
+    signIn: '/',
+    error: '/',
+  },
   callbacks: {
     async session({ session, user }) {
       if (session.user) {
@@ -47,10 +44,17 @@ export const authOptions: NextAuthOptions = {
       }
       return session;
     },
+    async redirect({ url, baseUrl }) {
+      // ローカル開発環境での適切なリダイレクト
+      if (url.startsWith("/")) return `${baseUrl}${url}`
+      else if (new URL(url).origin === baseUrl) return url
+      return baseUrl + "/dashboard"
+    },
   },
   events: {
     async createUser({ user }) {
       console.log("New user created:", user.email);
     },
   },
+  debug: process.env.NODE_ENV === 'development',
 };
