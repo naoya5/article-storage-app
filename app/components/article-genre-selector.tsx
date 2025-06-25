@@ -126,17 +126,24 @@ export function ArticleGenreSelector({
         {/* ジャンル追加ボタン */}
         {availableToAdd.length > 0 ? (
           <button
+            key="add-genre-button"
             onClick={() => setShowSelector(!showSelector)}
             className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors"
           >
             + ジャンル追加
           </button>
         ) : availableGenres.length === 0 ? (
-          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs text-gray-400 bg-gray-100">
+          <span 
+            key="no-genres-message"
+            className="inline-flex items-center px-2 py-1 rounded-full text-xs text-gray-400 bg-gray-100"
+          >
             ジャンル管理画面でジャンルを作成してください
           </span>
         ) : (
-          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs text-gray-400 bg-gray-100">
+          <span 
+            key="all-genres-added-message"
+            className="inline-flex items-center px-2 py-1 rounded-full text-xs text-gray-400 bg-gray-100"
+          >
             すべてのジャンルが追加済みです
           </span>
         )}
