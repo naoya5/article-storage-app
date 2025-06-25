@@ -9,9 +9,6 @@
       "maxDuration": 30
     }
   },
-  "env": {
-    "NEXTAUTH_URL": "https://article-storage-app.vercel.app"
-  },
   "build": {
     "env": {
       "SKIP_ENV_VALIDATION": "1"

@@ -12,7 +12,7 @@ export interface ArticleMetadata {
 export async function extractMetadata(url: string): Promise<ArticleMetadata> {
   try {
     const controller = new AbortController()
-    const timeout = setTimeout(() => controller.abort(), 10000) // 10秒タイムアウト
+    const timeout = setTimeout(() => controller.abort(), 5000) // 5秒タイムアウト（Vercel最適化）
     
     const response = await fetch(url, {
       headers: {
