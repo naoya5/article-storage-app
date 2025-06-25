@@ -79,6 +79,20 @@ This is a Next.js 15 application using the App Router architecture with TypeScri
 - Add proper CORS headers when needed
 - Use Next.js runtime configurations appropriately
 
+### Data Fetching Best Practices
+参考: https://zenn.dev/akfm/books/nextjs-basic-principle
+
+- **Server Components**: Use fetch directly in Server Components for initial data loading
+- **Client Components**: Use React hooks (useState, useEffect) with proper error handling
+- **Internal API Calls**: Always use absolute URLs or create utility functions for API calls
+- **Error Handling**: Implement comprehensive error handling with user-friendly messages
+- **Loading States**: Always provide loading indicators during data fetching
+- **Caching**: Use Next.js built-in fetch caching where appropriate
+- **Type Safety**: Define TypeScript interfaces for all API responses
+- **Abort Controllers**: Use AbortController for cancellable requests when needed
+- **Base URL**: Use environment variables or utility functions for API base URLs
+- **Request Headers**: Always include proper Content-Type and authentication headers
+
 ### Testing Requirements
 - **IMPORTANT**: Always run tests with Vitest before committing any changes
 - Write comprehensive tests for new features and bug fixes

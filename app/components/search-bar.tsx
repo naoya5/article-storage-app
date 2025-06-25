@@ -1,26 +1,7 @@
 "use client"
 
 import { useState } from "react"
-
-interface Tag {
-  id: string
-  name: string
-}
-
-interface Genre {
-  id: string
-  name: string
-  color: string
-}
-
-interface SearchFilters {
-  query: string
-  platform: string
-  genreId: string
-  tagId: string
-  dateFrom: string
-  dateTo: string
-}
+import type { SearchFilters, Genre, Tag } from "@/types/api"
 
 interface SearchBarProps {
   onSearch: (filters: SearchFilters) => void

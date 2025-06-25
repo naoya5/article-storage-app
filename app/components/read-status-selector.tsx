@@ -2,6 +2,8 @@
 
 import { useState } from "react"
 import { ReadStatus } from "@prisma/client"
+import { api, getErrorMessage } from "@/lib/api-client"
+import type { BookmarkUpdateRequest } from "@/types/api"
 
 interface ReadStatusSelectorProps {
   bookmarkId?: string
@@ -41,22 +43,13 @@ export function ReadStatusSelector({
 
     setUpdating(true)
     try {
-      const response = await fetch(`/api/bookmarks/${bookmarkId}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ readStatus: newStatus })
-      })
-
-      if (!response.ok) {
-        throw new Error('読書ステータスの更新に失敗しました')
-      }
+      const updateData: BookmarkUpdateRequest = { readStatus: newStatus }
+      await api.patch(`/api/bookmarks/${bookmarkId}`, updateData)
 
       onStatusChange?.(newStatus)
     } catch (error) {
       console.error('Read status update error:', error)
-      alert(error instanceof Error ? error.message : 'エラーが発生しました')
+      alert(getErrorMessage(error))
     } finally {
       setUpdating(false)
     }

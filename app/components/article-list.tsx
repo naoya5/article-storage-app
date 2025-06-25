@@ -3,77 +3,15 @@
 import { useState, useEffect, useCallback } from "react"
 import { ArticleCard } from "./article-card"
 import { SearchBar } from "./search-bar"
-import { ReadStatus } from "@prisma/client"
-
-interface Genre {
-  id: string
-  name: string
-  color: string
-}
-
-interface ArticleGenre {
-  id: string
-  genreId: string
-  genre: Genre
-}
-
-interface Tag {
-  id: string
-  name: string
-}
-
-interface ArticleTag {
-  id: string
-  tagId: string
-  tag: Tag
-}
-
-interface Bookmark {
-  id: string
-  userId: string
-  articleId: string
-  isFavorite: boolean
-  readStatus: ReadStatus
-  rating?: number | null
-  memo?: string | null
-  createdAt: Date
-}
-
-interface Article {
-  id: string
-  title: string
-  description?: string | null
-  url: string
-  platform: "TWITTER" | "ZENN" | "QIITA"
-  author?: string | null
-  publishedAt?: Date | null
-  thumbnail?: string | null
-  createdAt: Date
-  articleGenres?: ArticleGenre[]
-  articleTags?: ArticleTag[]
-  bookmarks?: Bookmark[]
-}
-
-interface Pagination {
-  page: number
-  limit: number
-  total: number
-  pages: number
-}
-
-interface ArticleListResponse {
-  articles: Article[]
-  pagination: Pagination
-}
-
-interface SearchFilters {
-  query: string
-  platform: string
-  genreId: string
-  tagId: string
-  dateFrom: string
-  dateTo: string
-}
+import { api, getErrorMessage } from "@/lib/api-client"
+import type { 
+  Article, 
+  ArticleListResponse, 
+  ArticleListParams, 
+  SearchFilters,
+  Genre,
+  Tag
+} from "@/types/api"
 
 interface ArticleListProps {
   refreshKey?: number
@@ -81,7 +19,7 @@ interface ArticleListProps {
 
 export function ArticleList({ refreshKey }: ArticleListProps) {
   const [articles, setArticles] = useState<Article[]>([])
-  const [pagination, setPagination] = useState<Pagination | null>(null)
+  const [pagination, setPagination] = useState<ArticleListResponse['pagination'] | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
@@ -102,33 +40,32 @@ export function ArticleList({ refreshKey }: ArticleListProps) {
       setLoading(true)
       setError(null)
       
-      const params = new URLSearchParams({
-        page: page.toString(),
-        limit: '6'
-      })
-      
       const currentFilters = filters || searchFilters
-      if (currentFilters.query) params.append('query', currentFilters.query)
-      if (currentFilters.platform) params.append('platform', currentFilters.platform)
-      if (currentFilters.genreId) params.append('genreId', currentFilters.genreId)
-      if (currentFilters.tagId) params.append('tagId', currentFilters.tagId)
-      if (currentFilters.dateFrom) params.append('dateFrom', currentFilters.dateFrom)
-      if (currentFilters.dateTo) params.append('dateTo', currentFilters.dateTo)
-      
-      const response = await fetch(`/api/articles?${params.toString()}`)
-      
-      if (!response.ok) {
-        if (response.status === 401) {
-          throw new Error("認証が必要です")
-        }
-        throw new Error("記事の取得に失敗しました")
+      const params: ArticleListParams = {
+        page,
+        limit: 6,
+        ...(currentFilters.query && { query: currentFilters.query }),
+        ...(currentFilters.platform && { platform: currentFilters.platform }),
+        ...(currentFilters.genreId && { genreId: currentFilters.genreId }),
+        ...(currentFilters.tagId && { tagId: currentFilters.tagId }),
+        ...(currentFilters.dateFrom && { dateFrom: currentFilters.dateFrom }),
+        ...(currentFilters.dateTo && { dateTo: currentFilters.dateTo }),
       }
 
-      const data: ArticleListResponse = await response.json()
+      const queryString = new URLSearchParams(
+        Object.entries(params).reduce((acc, [key, value]) => {
+          if (value !== undefined) {
+            acc[key] = String(value)
+          }
+          return acc
+        }, {} as Record<string, string>)
+      ).toString()
+      
+      const data = await api.get<ArticleListResponse>(`/api/articles?${queryString}`)
       setArticles(data.articles)
       setPagination(data.pagination)
     } catch (err) {
-      setError(err instanceof Error ? err.message : "エラーが発生しました")
+      setError(getErrorMessage(err))
       setArticles([])
       setPagination(null)
     } finally {
@@ -138,22 +75,15 @@ export function ArticleList({ refreshKey }: ArticleListProps) {
 
   const fetchFilters = async () => {
     try {
-      const [tagsResponse, genresResponse] = await Promise.all([
-        fetch('/api/tags'),
-        fetch('/api/genres')
+      const [tagsData, genresData] = await Promise.all([
+        api.get<{ tags: Tag[] }>('/api/tags'),
+        api.get<{ genres: Genre[] }>('/api/genres')
       ])
       
-      if (tagsResponse.ok) {
-        const tagsData = await tagsResponse.json()
-        setAvailableTags(tagsData.tags)
-      }
-      
-      if (genresResponse.ok) {
-        const genresData = await genresResponse.json()
-        setAvailableGenres(genresData.genres)
-      }
+      setAvailableTags(tagsData.tags)
+      setAvailableGenres(genresData.genres)
     } catch (err) {
-      console.error('Error fetching filters:', err)
+      console.error('Error fetching filters:', getErrorMessage(err))
     }
   }
 

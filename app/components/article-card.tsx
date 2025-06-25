@@ -7,56 +7,8 @@ import { useState } from "react"
 import { ArticleGenreSelector } from "./article-genre-selector"
 import { ArticleTagSelector } from "./article-tag-selector"
 import { ReadStatusSelector } from "./read-status-selector"
-import { ReadStatus } from "@prisma/client"
-
-interface Genre {
-  id: string
-  name: string
-  color: string
-}
-
-interface ArticleGenre {
-  id: string
-  genreId: string
-  genre: Genre
-}
-
-interface Tag {
-  id: string
-  name: string
-}
-
-interface ArticleTag {
-  id: string
-  tagId: string
-  tag: Tag
-}
-
-interface Bookmark {
-  id: string
-  userId: string
-  articleId: string
-  isFavorite: boolean
-  readStatus: ReadStatus
-  rating?: number | null
-  memo?: string | null
-  createdAt: Date
-}
-
-interface Article {
-  id: string
-  title: string
-  description?: string | null
-  url: string
-  platform: "TWITTER" | "ZENN" | "QIITA"
-  author?: string | null
-  publishedAt?: Date | null
-  thumbnail?: string | null
-  createdAt: Date
-  articleGenres?: ArticleGenre[]
-  articleTags?: ArticleTag[]
-  bookmarks?: Bookmark[]
-}
+import { api, getErrorMessage } from "@/lib/api-client"
+import type { Article, BookmarkCreateRequest } from "@/types/api"
 
 interface ArticleCardProps {
   article: Article
@@ -98,32 +50,17 @@ export function ArticleCard({ article, onGenresChange, onTagsChange, onBookmarkC
     try {
       if (isBookmarked) {
         // ブックマーク削除
-        const response = await fetch(`/api/bookmarks?articleId=${article.id}`, {
-          method: 'DELETE'
-        })
-        
-        if (!response.ok) {
-          throw new Error('ブックマークの削除に失敗しました')
-        }
+        await api.delete(`/api/bookmarks?articleId=${article.id}`)
       } else {
         // ブックマーク追加
-        const response = await fetch('/api/bookmarks', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ articleId: article.id })
-        })
-        
-        if (!response.ok) {
-          throw new Error('ブックマークの追加に失敗しました')
-        }
+        const requestBody: BookmarkCreateRequest = { articleId: article.id }
+        await api.post('/api/bookmarks', requestBody)
       }
       
       onBookmarkChange?.()
     } catch (error) {
       console.error('Bookmark error:', error)
-      alert(error instanceof Error ? error.message : 'エラーが発生しました')
+      alert(getErrorMessage(error))
     } finally {
       setBookmarkLoading(false)
     }
