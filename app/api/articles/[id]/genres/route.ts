@@ -3,11 +3,11 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 
-interface RouteParams {
-  params: { id: string }
-}
-
-export async function POST(request: Request, { params }: RouteParams) {
+export async function POST(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params
   try {
     const session = await getServerSession(authOptions)
     
@@ -30,7 +30,7 @@ export async function POST(request: Request, { params }: RouteParams) {
     // 記事の存在確認と所有者チェック
     const article = await prisma.article.findFirst({
       where: {
-        id: params.id,
+        id: id,
         userId: session.user.id
       }
     })
@@ -61,7 +61,7 @@ export async function POST(request: Request, { params }: RouteParams) {
     const existingRelation = await prisma.articleGenre.findUnique({
       where: {
         articleId_genreId: {
-          articleId: params.id,
+          articleId: id,
           genreId: genreId
         }
       }
@@ -76,7 +76,7 @@ export async function POST(request: Request, { params }: RouteParams) {
 
     const articleGenre = await prisma.articleGenre.create({
       data: {
-        articleId: params.id,
+        articleId: id,
         genreId: genreId
       },
       include: {
@@ -87,7 +87,6 @@ export async function POST(request: Request, { params }: RouteParams) {
     return NextResponse.json({
       message: "ジャンルが正常に付与されました",
       articleGenre: {
-        id: articleGenre.id,
         genreId: articleGenre.genreId,
         genre: {
           id: articleGenre.genre.id,
@@ -106,7 +105,11 @@ export async function POST(request: Request, { params }: RouteParams) {
   }
 }
 
-export async function DELETE(request: Request, { params }: RouteParams) {
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params
   try {
     const session = await getServerSession(authOptions)
     
@@ -129,7 +132,7 @@ export async function DELETE(request: Request, { params }: RouteParams) {
     // 記事の存在確認と所有者チェック
     const article = await prisma.article.findFirst({
       where: {
-        id: params.id,
+        id: id,
         userId: session.user.id
       }
     })
@@ -145,7 +148,7 @@ export async function DELETE(request: Request, { params }: RouteParams) {
     const existingRelation = await prisma.articleGenre.findUnique({
       where: {
         articleId_genreId: {
-          articleId: params.id,
+          articleId: id,
           genreId: genreId
         }
       }
@@ -161,7 +164,7 @@ export async function DELETE(request: Request, { params }: RouteParams) {
     await prisma.articleGenre.delete({
       where: {
         articleId_genreId: {
-          articleId: params.id,
+          articleId: id,
           genreId: genreId
         }
       }

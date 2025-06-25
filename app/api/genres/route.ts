@@ -51,7 +51,7 @@ export async function POST(request: Request) {
       )
     }
 
-    const { name, description, color } = await request.json()
+    const { name, color } = await request.json()
 
     if (!name || typeof name !== 'string' || name.trim().length === 0) {
       return NextResponse.json(
@@ -85,7 +85,6 @@ export async function POST(request: Request) {
     const genre = await prisma.genre.create({
       data: {
         name: name.trim(),
-        description: description?.trim() || null,
         color: color || '#3B82F6',
         userId: session.user.id,
       },
@@ -96,7 +95,6 @@ export async function POST(request: Request) {
       genre: {
         id: genre.id,
         name: genre.name,
-        description: genre.description,
         color: genre.color,
         createdAt: genre.createdAt,
       }

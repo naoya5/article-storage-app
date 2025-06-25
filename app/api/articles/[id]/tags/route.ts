@@ -3,11 +3,11 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 
-interface RouteParams {
-  params: { id: string }
-}
-
-export async function POST(request: Request, { params }: RouteParams) {
+export async function POST(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params
   try {
     const session = await getServerSession(authOptions)
     
@@ -30,7 +30,7 @@ export async function POST(request: Request, { params }: RouteParams) {
     // 記事の存在確認と所有者チェック
     const article = await prisma.article.findFirst({
       where: {
-        id: params.id,
+        id: id,
         userId: session.user.id
       }
     })
@@ -60,7 +60,7 @@ export async function POST(request: Request, { params }: RouteParams) {
     // 既に関連付けられているかチェック
     const existingRelation = await prisma.articleTag.findFirst({
       where: {
-        articleId: params.id,
+        articleId: id,
         tagId: tagId
       }
     })
@@ -75,7 +75,7 @@ export async function POST(request: Request, { params }: RouteParams) {
     // 関連付けを作成
     await prisma.articleTag.create({
       data: {
-        articleId: params.id,
+        articleId: id,
         tagId: tagId
       }
     })
@@ -93,7 +93,11 @@ export async function POST(request: Request, { params }: RouteParams) {
   }
 }
 
-export async function DELETE(request: Request, { params }: RouteParams) {
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params
   try {
     const session = await getServerSession(authOptions)
     
@@ -116,7 +120,7 @@ export async function DELETE(request: Request, { params }: RouteParams) {
     // 記事の存在確認と所有者チェック
     const article = await prisma.article.findFirst({
       where: {
-        id: params.id,
+        id: id,
         userId: session.user.id
       }
     })
@@ -131,7 +135,7 @@ export async function DELETE(request: Request, { params }: RouteParams) {
     // 関連付けの存在確認
     const existingRelation = await prisma.articleTag.findFirst({
       where: {
-        articleId: params.id,
+        articleId: id,
         tagId: tagId
       }
     })
@@ -147,7 +151,7 @@ export async function DELETE(request: Request, { params }: RouteParams) {
     await prisma.articleTag.delete({
       where: {
         articleId_tagId: {
-          articleId: params.id,
+          articleId: id,
           tagId: tagId
         }
       }

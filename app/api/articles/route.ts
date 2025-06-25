@@ -127,10 +127,10 @@ export async function GET(request: Request) {
       ...(platform && { platform: platform as Platform }),
       ...(query && {
         OR: [
-          { title: { contains: query, mode: 'insensitive' } },
-          { description: { contains: query, mode: 'insensitive' } },
-          { content: { contains: query, mode: 'insensitive' } },
-          { author: { contains: query, mode: 'insensitive' } }
+          { title: { contains: query, mode: 'insensitive' as const } },
+          { description: { contains: query, mode: 'insensitive' as const } },
+          { content: { contains: query, mode: 'insensitive' as const } },
+          { author: { contains: query, mode: 'insensitive' as const } }
         ]
       }),
       ...(genreId && {

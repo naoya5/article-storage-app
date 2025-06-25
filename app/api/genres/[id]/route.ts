@@ -3,11 +3,11 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 
-interface RouteParams {
-  params: { id: string }
-}
-
-export async function PUT(request: Request, { params }: RouteParams) {
+export async function PUT(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params
   try {
     const session = await getServerSession(authOptions)
     
@@ -18,7 +18,7 @@ export async function PUT(request: Request, { params }: RouteParams) {
       )
     }
 
-    const { name, description, color } = await request.json()
+    const { name, color } = await request.json()
 
     if (!name || typeof name !== 'string' || name.trim().length === 0) {
       return NextResponse.json(
@@ -37,7 +37,7 @@ export async function PUT(request: Request, { params }: RouteParams) {
     // ジャンルの存在確認と所有者チェック
     const existingGenre = await prisma.genre.findFirst({
       where: {
-        id: params.id,
+        id: id,
         userId: session.user.id
       }
     })
@@ -54,7 +54,7 @@ export async function PUT(request: Request, { params }: RouteParams) {
       where: {
         name: name.trim(),
         userId: session.user.id,
-        id: { not: params.id }
+        id: { not: id }
       }
     })
 
@@ -66,10 +66,9 @@ export async function PUT(request: Request, { params }: RouteParams) {
     }
 
     const updatedGenre = await prisma.genre.update({
-      where: { id: params.id },
+      where: { id: id },
       data: {
         name: name.trim(),
-        description: description?.trim() || null,
         color: color || '#3B82F6',
       },
     })
@@ -79,7 +78,6 @@ export async function PUT(request: Request, { params }: RouteParams) {
       genre: {
         id: updatedGenre.id,
         name: updatedGenre.name,
-        description: updatedGenre.description,
         color: updatedGenre.color,
         updatedAt: updatedGenre.updatedAt,
       }
@@ -94,7 +92,11 @@ export async function PUT(request: Request, { params }: RouteParams) {
   }
 }
 
-export async function DELETE(request: Request, { params }: RouteParams) {
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params
   try {
     const session = await getServerSession(authOptions)
     
@@ -108,7 +110,7 @@ export async function DELETE(request: Request, { params }: RouteParams) {
     // ジャンルの存在確認と所有者チェック
     const existingGenre = await prisma.genre.findFirst({
       where: {
-        id: params.id,
+        id: id,
         userId: session.user.id
       },
       include: {
@@ -132,7 +134,7 @@ export async function DELETE(request: Request, { params }: RouteParams) {
     }
 
     await prisma.genre.delete({
-      where: { id: params.id }
+      where: { id: id }
     })
 
     return NextResponse.json({
