@@ -14,38 +14,52 @@ export async function POST(request: Request) {
       )
     }
 
-    // Prisma migrate deploy を実行
-    // 注意: 本来はCLIでの実行が推奨されますが、初回デプロイ時の便宜的措置
-    
-    console.log("Starting database migration...")
+    // Neonデータベース接続テスト
+    console.log("Starting Neon database connection test...")
     
     // データベース接続テスト
     await prisma.$connect()
-    console.log("Database connection successful")
+    console.log("Neon database connection successful")
+    
+    // PostgreSQLバージョン確認
+    const version = await prisma.$queryRaw`SELECT version() as version`
+    console.log("Database version:", version)
     
     // 既存のテーブルを確認
     const tables = await prisma.$queryRaw`
       SELECT table_name 
       FROM information_schema.tables 
       WHERE table_schema = 'public'
+      ORDER BY table_name
     `
     
     console.log("Existing tables:", tables)
+    
+    // 接続情報確認（パスワードを隠して表示）
+    const connectionInfo = process.env.DATABASE_URL?.replace(/:([^:@]+)@/, ':***@') || 'Not set'
     
     await prisma.$disconnect()
     
     return NextResponse.json({
       success: true,
-      message: "Database connection verified. Please run 'npx prisma migrate deploy' locally with production DATABASE_URL.",
+      message: "Neon database connection verified. Please run 'npm run deploy:migrate' locally to execute migrations.",
+      database: "Neon PostgreSQL",
+      connectionInfo,
+      version,
       tables
     })
 
   } catch (error) {
-    console.error('Migration error:', error)
+    console.error('Neon connection error:', error)
     return NextResponse.json(
       { 
-        error: "Migration failed", 
-        details: error instanceof Error ? error.message : "Unknown error"
+        error: "Neon database connection failed", 
+        details: error instanceof Error ? error.message : "Unknown error",
+        troubleshooting: [
+          "1. Check DATABASE_URL format: postgresql://user:pass@host/db?sslmode=require",
+          "2. Verify Neon database is active",
+          "3. Check IP access restrictions in Neon console"
+        ]
       },
       { status: 500 }
     )
