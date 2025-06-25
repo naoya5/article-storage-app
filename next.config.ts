@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: 'standalone',
+  serverExternalPackages: ['@prisma/client', 'bcryptjs'],
   images: {
     remotePatterns: [
       {
@@ -37,6 +37,12 @@ const nextConfig: NextConfig = {
         hostname: 'cdn-ak.f.st-hatena.com',
       }
     ],
+  },
+  typescript: {
+    ignoreBuildErrors: false,
+  },
+  eslint: {
+    ignoreDuringBuilds: false,
   },
 };
 
