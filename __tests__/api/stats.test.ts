@@ -3,6 +3,7 @@ import { GET } from '@/app/api/stats/route'
 import { NextRequest } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { prisma } from '@/lib/prisma'
+import { cache } from '@/lib/cache'
 import { Platform, ReadStatus } from '@prisma/client'
 
 // モック
@@ -35,6 +36,9 @@ const mockPrisma = vi.mocked(prisma)
 describe('Stats API Tests', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    
+    // キャッシュをクリア
+    cache.clear()
     
     // デフォルトの認証セッション
     mockGetServerSession.mockResolvedValue({

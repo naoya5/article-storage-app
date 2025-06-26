@@ -102,22 +102,22 @@ export function StatsDashboard() {
       {/* 基本統計 */}
       <div>
         <h2 className="text-xl font-semibold text-gray-900 mb-4">基本統計</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-blue-50 rounded-lg p-4">
-            <div className="text-2xl font-bold text-blue-600">{stats.basic.totalArticles}</div>
-            <div className="text-sm text-gray-600">総記事数</div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          <div className="bg-blue-50 rounded-lg p-3 sm:p-4">
+            <div className="text-xl sm:text-2xl font-bold text-blue-600">{stats.basic.totalArticles}</div>
+            <div className="text-xs sm:text-sm text-gray-600">総記事数</div>
           </div>
-          <div className="bg-green-50 rounded-lg p-4">
-            <div className="text-2xl font-bold text-green-600">{stats.basic.totalBookmarks}</div>
-            <div className="text-sm text-gray-600">ブックマーク</div>
+          <div className="bg-green-50 rounded-lg p-3 sm:p-4">
+            <div className="text-xl sm:text-2xl font-bold text-green-600">{stats.basic.totalBookmarks}</div>
+            <div className="text-xs sm:text-sm text-gray-600">ブックマーク</div>
           </div>
-          <div className="bg-purple-50 rounded-lg p-4">
-            <div className="text-2xl font-bold text-purple-600">{stats.basic.totalGenres}</div>
-            <div className="text-sm text-gray-600">ジャンル</div>
+          <div className="bg-purple-50 rounded-lg p-3 sm:p-4">
+            <div className="text-xl sm:text-2xl font-bold text-purple-600">{stats.basic.totalGenres}</div>
+            <div className="text-xs sm:text-sm text-gray-600">ジャンル</div>
           </div>
-          <div className="bg-orange-50 rounded-lg p-4">
-            <div className="text-2xl font-bold text-orange-600">{stats.basic.totalTags}</div>
-            <div className="text-sm text-gray-600">タグ</div>
+          <div className="bg-orange-50 rounded-lg p-3 sm:p-4">
+            <div className="text-xl sm:text-2xl font-bold text-orange-600">{stats.basic.totalTags}</div>
+            <div className="text-xs sm:text-sm text-gray-600">タグ</div>
           </div>
         </div>
       </div>
@@ -296,7 +296,7 @@ export function StatsDashboard() {
         <div>
           <h2 className="text-xl font-semibold text-gray-900 mb-4">人気タグ（上位10位）</h2>
           <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {stats.tags.map((tag, index) => (
                 <div key={tag.id} className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">

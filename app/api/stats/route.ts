@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { cache, cacheKeys } from "@/lib/cache"
 // TypeScript types for statistics
 
 export const runtime = 'nodejs'
@@ -19,6 +20,13 @@ export async function GET() {
     }
 
     const userId = session.user.id
+    
+    // キャッシュをチェック
+    const cacheKey = cacheKeys.stats(userId)
+    const cachedStats = cache.get(cacheKey)
+    if (cachedStats) {
+      return NextResponse.json(cachedStats)
+    }
 
     // 基本統計
     const [
@@ -153,7 +161,7 @@ export async function GET() {
         }).then(count => Math.round((count / totalBookmarks) * 100))
       : 0
 
-    return NextResponse.json({
+    const statsData = {
       basic: {
         totalArticles,
         totalBookmarks,
@@ -187,7 +195,12 @@ export async function GET() {
         count: tag.articleTags.length
       })),
       activity: activityByDate
-    })
+    }
+    
+    // キャッシュに保存（10分間）
+    cache.set(cacheKey, statsData, 10 * 60 * 1000)
+
+    return NextResponse.json(statsData)
 
   } catch (error) {
     console.error('Error fetching stats:', error)

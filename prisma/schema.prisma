@@ -96,6 +96,9 @@ model Article {
   @@index([platform])
   @@index([title])
   @@index([createdAt])
+  @@index([userId, platform])
+  @@index([userId, createdAt])
+  @@index([userId, platform, createdAt])
   @@map("articles")
 }
 
@@ -166,6 +169,9 @@ model Bookmark {
 
   @@unique([articleId, userId])
   @@index([userId])
+  @@index([userId, readStatus])
+  @@index([userId, isFavorite])
+  @@index([userId, rating])
   @@map("bookmarks")
 }
 

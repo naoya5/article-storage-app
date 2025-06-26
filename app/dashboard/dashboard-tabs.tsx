@@ -8,6 +8,7 @@ import { GenreManager } from "../components/genre-manager"
 import { TagManager } from "../components/tag-manager"
 import { StatsDashboard } from "../components/stats-dashboard"
 import { RecentActivity } from "../components/recent-activity"
+import { KeyboardShortcuts } from "../components/keyboard-shortcuts"
 import type { Genre, Tag } from "@/types/api"
 
 interface DashboardTabsProps {
@@ -24,13 +25,32 @@ export function DashboardTabs({ initialGenres, initialTags }: DashboardTabsProps
     setRefreshKey((prev) => prev + 1)
   }
 
+  const handleTabChange = (tab: "articles" | "genres" | "tags" | "stats") => {
+    setActiveTab(tab)
+  }
+
+  const handleSearchFocus = () => {
+    // 検索バーにフォーカス（記事管理タブに切り替えてからフォーカス）
+    if (activeTab !== "articles") {
+      setActiveTab("articles")
+    }
+    // 少し遅延を入れてからフォーカス
+    setTimeout(() => {
+      const searchInput = document.querySelector('input[placeholder*="検索"]') as HTMLInputElement
+      if (searchInput) {
+        searchInput.focus()
+      }
+    }, 100)
+  }
+
   return (
     <>
       {/* タブナビゲーション */}
-      <div className="flex flex-wrap sm:flex-nowrap space-x-1 mb-6 bg-gray-100 p-1 rounded-lg w-fit max-w-full overflow-x-auto">
+      <div className="flex space-x-1 mb-6 bg-gray-100 p-1 rounded-lg overflow-x-auto scrollbar-hide"
+           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
         <button
           onClick={() => setActiveTab("articles")}
-          className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+          className={`px-3 sm:px-4 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
             activeTab === "articles"
               ? "bg-white text-gray-900 shadow-sm"
               : "text-gray-600 hover:text-gray-900"
@@ -40,7 +60,7 @@ export function DashboardTabs({ initialGenres, initialTags }: DashboardTabsProps
         </button>
         <button
           onClick={() => setActiveTab("genres")}
-          className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+          className={`px-3 sm:px-4 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
             activeTab === "genres"
               ? "bg-white text-gray-900 shadow-sm"
               : "text-gray-600 hover:text-gray-900"
@@ -50,7 +70,7 @@ export function DashboardTabs({ initialGenres, initialTags }: DashboardTabsProps
         </button>
         <button
           onClick={() => setActiveTab("tags")}
-          className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+          className={`px-3 sm:px-4 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
             activeTab === "tags"
               ? "bg-white text-gray-900 shadow-sm"
               : "text-gray-600 hover:text-gray-900"
@@ -60,7 +80,7 @@ export function DashboardTabs({ initialGenres, initialTags }: DashboardTabsProps
         </button>
         <button
           onClick={() => setActiveTab("stats")}
-          className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+          className={`px-3 sm:px-4 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
             activeTab === "stats"
               ? "bg-white text-gray-900 shadow-sm"
               : "text-gray-600 hover:text-gray-900"
@@ -99,24 +119,30 @@ export function DashboardTabs({ initialGenres, initialTags }: DashboardTabsProps
           <TagManager refreshKey={refreshKey} />
         </div>
       ) : (
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
           {/* 統計ダッシュボード */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-semibold mb-6">統計ダッシュボード</h2>
+            <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
+              <h2 className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6">統計ダッシュボード</h2>
               <StatsDashboard />
             </div>
           </div>
 
           {/* 最近の活動 */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-semibold mb-6">最近の活動</h2>
+            <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
+              <h2 className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6">最近の活動</h2>
               <RecentActivity limit={10} />
             </div>
           </div>
         </div>
       )}
+
+      {/* キーボードショートカット */}
+      <KeyboardShortcuts 
+        onTabChange={handleTabChange}
+        onSearch={handleSearchFocus}
+      />
     </>
   )
 }
