@@ -1,4 +1,5 @@
 import { AuthButton } from "./components/auth-button";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -21,29 +22,29 @@ export default function Home() {
           </p>
           
           <div className="grid md:grid-cols-3 gap-8 mt-12">
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <div className="text-3xl mb-4">📚</div>
-              <h3 className="text-lg font-semibold mb-2">記事をストック</h3>
+            <Link href="/total-articles" className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+              <div className="text-3xl mb-4">📊</div>
+              <h3 className="text-lg font-semibold mb-2">総記事数</h3>
               <p className="text-gray-600">
-                URLを貼り付けるだけで、記事の情報を自動取得してストックできます。
+                登録済み記事の総数とプラットフォーム別の内訳を確認できます。
               </p>
-            </div>
+            </Link>
             
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <div className="text-3xl mb-4">🏷️</div>
-              <h3 className="text-lg font-semibold mb-2">ジャンル別整理</h3>
+            <Link href="/monthly-articles" className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+              <div className="text-3xl mb-4">📈</div>
+              <h3 className="text-lg font-semibold mb-2">今月追加</h3>
               <p className="text-gray-600">
-                カスタムジャンルやタグを使って、記事を効率的に分類・管理できます。
+                今月の新規追加記事数と追加パターンを分析できます。
               </p>
-            </div>
+            </Link>
             
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <div className="text-3xl mb-4">🔍</div>
-              <h3 className="text-lg font-semibold mb-2">高速検索</h3>
+            <Link href="/favorites" className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+              <div className="text-3xl mb-4">⭐</div>
+              <h3 className="text-lg font-semibold mb-2">お気に入り</h3>
               <p className="text-gray-600">
-                タイトルや内容での全文検索で、必要な記事を素早く見つけられます。
+                ブックマーク済み記事と読書ステータス、評価分布を確認できます。
               </p>
-            </div>
+            </Link>
           </div>
         </div>
       </main>
