@@ -7,6 +7,8 @@ import { useState } from "react"
 import { ArticleGenreSelector } from "./article-genre-selector"
 import { ArticleTagSelector } from "./article-tag-selector"
 import { ReadStatusSelector } from "./read-status-selector"
+import { RatingSelector } from "./rating-selector"
+import { MemoEditor } from "./memo-editor"
 import { api, getErrorMessage } from "@/lib/api-client"
 import type { Article, BookmarkCreateRequest } from "@/types/api"
 
@@ -184,6 +186,29 @@ export function ArticleCard({ article, onGenresChange, onTagsChange, onBookmarkC
               bookmarkId={article.bookmarks[0].id}
               currentStatus={article.bookmarks[0].readStatus}
               onStatusChange={() => onBookmarkChange?.()}
+            />
+          </div>
+        )}
+
+        {/* 評価 */}
+        {isBookmarked && article.bookmarks?.[0] && (
+          <div className="mb-3">
+            <div className="text-xs text-gray-600 mb-1">評価</div>
+            <RatingSelector
+              bookmarkId={article.bookmarks[0].id}
+              currentRating={article.bookmarks[0].rating}
+              onRatingChange={() => onBookmarkChange?.()}
+            />
+          </div>
+        )}
+
+        {/* メモ */}
+        {isBookmarked && article.bookmarks?.[0] && (
+          <div className="mb-3">
+            <MemoEditor
+              bookmarkId={article.bookmarks[0].id}
+              currentMemo={article.bookmarks[0].memo}
+              onMemoChange={() => onBookmarkChange?.()}
             />
           </div>
         )}
