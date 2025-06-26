@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react"
 import { TagForm } from "./tag-form"
+import { api, getErrorMessage } from "@/lib/api-client"
+import type { Tag as BaseTag } from "@/types/api"
 
 interface Tag {
   id: string
@@ -12,6 +14,7 @@ interface Tag {
 
 interface TagManagerProps {
   refreshKey?: number
+  initialTags?: BaseTag[]
 }
 
 export function TagManager({ refreshKey }: TagManagerProps) {
@@ -27,19 +30,10 @@ export function TagManager({ refreshKey }: TagManagerProps) {
       setLoading(true)
       setError(null)
       
-      const response = await fetch('/api/tags')
-      
-      if (!response.ok) {
-        if (response.status === 401) {
-          throw new Error("認証が必要です")
-        }
-        throw new Error("タグの取得に失敗しました")
-      }
-
-      const data = await response.json()
+      const data = await api.get<{ tags: Tag[] }>('/api/tags')
       setTags(data.tags)
     } catch (err) {
-      setError(err instanceof Error ? err.message : "エラーが発生しました")
+      setError(getErrorMessage(err))
       setTags([])
     } finally {
       setLoading(false)

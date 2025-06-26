@@ -66,6 +66,13 @@ This is a Next.js 15 application using the App Router architecture with TypeScri
 ## Next.js Best Practices
 
 ### Component Development
+- **Server Components First**: Use Server Components by default, switch to Client Components only when necessary
+- **Data Fetching on Server**: Perform data fetching in Server Components and pass data as props to Client Components
+- **Client Components Only When Needed**: Use "use client" only for components requiring:
+  - Interactive event handlers (onClick, onChange, etc.)
+  - Browser-only APIs (localStorage, window object)
+  - State management (useState, useReducer)
+  - Effects (useEffect, custom hooks)
 - Use TypeScript for all components with proper type definitions
 - Follow the App Router conventions for page and layout components
 - Use the `@/` path alias for imports from the project root

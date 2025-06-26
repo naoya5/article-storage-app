@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react"
 import { GenreForm } from "./genre-form"
+import { api, getErrorMessage } from "@/lib/api-client"
+import type { Genre as BaseGenre } from "@/types/api"
 
 interface Genre {
   id: string
@@ -14,6 +16,7 @@ interface Genre {
 
 interface GenreManagerProps {
   refreshKey?: number
+  initialGenres?: BaseGenre[]
 }
 
 export function GenreManager({ refreshKey }: GenreManagerProps) {
@@ -29,19 +32,10 @@ export function GenreManager({ refreshKey }: GenreManagerProps) {
       setLoading(true)
       setError(null)
       
-      const response = await fetch('/api/genres')
-      
-      if (!response.ok) {
-        if (response.status === 401) {
-          throw new Error("認証が必要です")
-        }
-        throw new Error("ジャンルの取得に失敗しました")
-      }
-
-      const data = await response.json()
+      const data = await api.get<{ genres: Genre[] }>('/api/genres')
       setGenres(data.genres)
     } catch (err) {
-      setError(err instanceof Error ? err.message : "エラーが発生しました")
+      setError(getErrorMessage(err))
       setGenres([])
     } finally {
       setLoading(false)

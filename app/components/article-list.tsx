@@ -15,9 +15,11 @@ import type {
 
 interface ArticleListProps {
   refreshKey?: number
+  initialGenres?: Genre[]
+  initialTags?: Tag[]
 }
 
-export function ArticleList({ refreshKey }: ArticleListProps) {
+export function ArticleList({ refreshKey, initialGenres = [], initialTags = [] }: ArticleListProps) {
   const [articles, setArticles] = useState<Article[]>([])
   const [pagination, setPagination] = useState<ArticleListResponse['pagination'] | null>(null)
   const [loading, setLoading] = useState(true)
@@ -31,8 +33,8 @@ export function ArticleList({ refreshKey }: ArticleListProps) {
     dateFrom: '',
     dateTo: ''
   })
-  const [availableTags, setAvailableTags] = useState<Tag[]>([])
-  const [availableGenres, setAvailableGenres] = useState<Genre[]>([])
+  const [availableTags, setAvailableTags] = useState<Tag[]>(initialTags)
+  const [availableGenres, setAvailableGenres] = useState<Genre[]>(initialGenres)
   const [searchLoading, setSearchLoading] = useState(false)
 
   const fetchArticles = useCallback(async (page: number = 1, filters?: SearchFilters) => {
@@ -73,24 +75,35 @@ export function ArticleList({ refreshKey }: ArticleListProps) {
     }
   }, [searchFilters])
 
-  const fetchFilters = async () => {
+  const fetchFilters = useCallback(async () => {
     try {
-      const [tagsData, genresData] = await Promise.all([
-        api.get<{ tags: Tag[] }>('/api/tags'),
-        api.get<{ genres: Genre[] }>('/api/genres')
-      ])
-      
-      setAvailableTags(tagsData.tags)
-      setAvailableGenres(genresData.genres)
+      // 初期データがない場合のみAPIから取得
+      if (initialTags.length === 0 && initialGenres.length === 0) {
+        const [tagsData, genresData] = await Promise.all([
+          api.get<{ tags: Tag[] }>('/api/tags'),
+          api.get<{ genres: Genre[] }>('/api/genres')
+        ])
+        setAvailableTags(tagsData.tags)
+        setAvailableGenres(genresData.genres)
+      } else if (initialTags.length === 0) {
+        const tagsData = await api.get<{ tags: Tag[] }>('/api/tags')
+        setAvailableTags(tagsData.tags)
+      } else if (initialGenres.length === 0) {
+        const genresData = await api.get<{ genres: Genre[] }>('/api/genres')
+        setAvailableGenres(genresData.genres)
+      }
     } catch (err) {
       console.error('Error fetching filters:', getErrorMessage(err))
     }
-  }
+  }, [initialTags.length, initialGenres.length])
 
   useEffect(() => {
     fetchArticles(currentPage)
-    fetchFilters()
   }, [currentPage, refreshKey, fetchArticles])
+
+  useEffect(() => {
+    fetchFilters()
+  }, [fetchFilters])
 
   const handleSearch = async (filters: SearchFilters) => {
     setSearchFilters(filters)
