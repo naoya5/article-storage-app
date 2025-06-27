@@ -5,6 +5,7 @@ import { cache, cacheKeys } from "@/lib/cache"
 import { redirect } from "next/navigation"
 import { DashboardTabs } from "./dashboard-tabs"
 import type { Genre, Tag } from "@/types/api"
+import Link from "next/link"
 
 interface StatsData {
   basic: {
@@ -331,7 +332,15 @@ export default async function DashboardPage() {
       <header className="bg-white shadow-sm">
         <div className="max-w-6xl mx-auto px-6 py-4">
           <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-gray-900">ダッシュボード</h1>
+            <div className="flex items-center gap-4">
+              <Link 
+                href="/" 
+                className="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors"
+              >
+                ← ホーム
+              </Link>
+              <h1 className="text-2xl font-bold text-gray-900">ダッシュボード</h1>
+            </div>
             <div className="text-sm text-gray-600">
               ようこそ、{session.user?.name || session.user?.email}さん
             </div>
