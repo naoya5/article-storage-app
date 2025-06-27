@@ -1,7 +1,6 @@
-"use client"
-
-import { useState, useEffect } from "react"
-import { api, getErrorMessage } from "@/lib/api-client"
+interface StatsDashboardProps {
+  stats: StatsData | null
+}
 
 interface StatsData {
   basic: {
@@ -51,51 +50,14 @@ const readStatusConfig = {
   READ_LATER: { name: '後で読む', color: '#3B82F6' }
 }
 
-export function StatsDashboard() {
-  const [stats, setStats] = useState<StatsData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    fetchStats()
-  }, [])
-
-  const fetchStats = async () => {
-    try {
-      setLoading(true)
-      setError(null)
-      const data = await api.get<StatsData>('/api/stats')
-      setStats(data)
-    } catch (err) {
-      setError(getErrorMessage(err))
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      </div>
-    )
-  }
-
-  if (error) {
+export function StatsDashboard({ stats }: StatsDashboardProps) {
+  if (!stats) {
     return (
       <div className="text-center py-12">
-        <div className="text-red-600 mb-4">{error}</div>
-        <button
-          onClick={fetchStats}
-          className="text-blue-600 hover:text-blue-800"
-        >
-          再試行
-        </button>
+        <div className="text-gray-500">統計データがありません</div>
       </div>
     )
   }
-
-  if (!stats) return null
 
   return (
     <div className="space-y-8">

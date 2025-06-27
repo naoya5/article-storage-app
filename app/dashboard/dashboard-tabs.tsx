@@ -9,15 +9,53 @@ import { TagManager } from "../components/tag-manager"
 import { StatsDashboard } from "../components/stats-dashboard"
 import { RecentActivity } from "../components/recent-activity"
 import { KeyboardShortcuts } from "../components/keyboard-shortcuts"
-import type { Genre, Tag } from "@/types/api"
+import type { Genre, Tag, Article } from "@/types/api"
+
+interface StatsData {
+  basic: {
+    totalArticles: number
+    totalBookmarks: number
+    totalGenres: number
+    totalTags: number
+    monthlyArticles: number
+    weeklyArticles: number
+    favoriteRate: number
+  }
+  platforms: Array<{
+    platform: string
+    count: number
+  }>
+  readStatus: Array<{
+    status: string
+    count: number
+  }>
+  ratings: Array<{
+    rating: number
+    count: number
+  }>
+  genres: Array<{
+    id: string
+    name: string
+    color: string
+    count: number
+  }>
+  tags: Array<{
+    id: string
+    name: string
+    count: number
+  }>
+  activity: Record<string, number>
+}
 
 interface DashboardTabsProps {
   initialGenres: Genre[]
   initialTags: Tag[]
   session: Session
+  statsData: StatsData | null
+  recentArticles: Article[]
 }
 
-export function DashboardTabs({ initialGenres, initialTags }: DashboardTabsProps) {
+export function DashboardTabs({ initialGenres, initialTags, statsData, recentArticles }: DashboardTabsProps) {
   const [refreshKey, setRefreshKey] = useState(0)
   const [activeTab, setActiveTab] = useState<"articles" | "genres" | "tags" | "stats">("articles")
 
@@ -124,7 +162,7 @@ export function DashboardTabs({ initialGenres, initialTags }: DashboardTabsProps
           <div className="lg:col-span-2">
             <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
               <h2 className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6">統計ダッシュボード</h2>
-              <StatsDashboard />
+              <StatsDashboard stats={statsData} />
             </div>
           </div>
 
@@ -132,7 +170,7 @@ export function DashboardTabs({ initialGenres, initialTags }: DashboardTabsProps
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
               <h2 className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6">最近の活動</h2>
-              <RecentActivity limit={10} />
+              <RecentActivity articles={recentArticles} limit={10} />
             </div>
           </div>
         </div>

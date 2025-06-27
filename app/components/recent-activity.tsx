@@ -1,46 +1,14 @@
-"use client"
-
-import { useState, useEffect } from "react"
 import { formatDistanceToNow } from "date-fns"
 import { ja } from "date-fns/locale"
-import { api, getErrorMessage } from "@/lib/api-client"
 import type { Article } from "@/types/api"
 
 interface RecentActivityProps {
+  articles: Article[]
   limit?: number
 }
 
-export function RecentActivity({ limit = 10 }: RecentActivityProps) {
-  const [recentArticles, setRecentArticles] = useState<Article[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    fetchRecentActivity()
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
-
-  const fetchRecentActivity = async () => {
-    try {
-      setLoading(true)
-      setError(null)
-      
-      const response = await api.get<{
-        articles: Article[]
-        pagination: {
-          page: number
-          limit: number
-          total: number
-          pages: number
-        }
-      }>(`/api/articles?page=1&limit=${limit}`)
-      
-      setRecentArticles(response.articles)
-    } catch (err) {
-      setError(getErrorMessage(err))
-    } finally {
-      setLoading(false)
-    }
-  }
+export function RecentActivity({ articles, limit = 10 }: RecentActivityProps) {
+  const recentArticles = articles.slice(0, limit)
 
   const platformConfig = {
     TWITTER: { name: 'Twitter', color: 'bg-blue-100 text-blue-800' },
@@ -48,37 +16,6 @@ export function RecentActivity({ limit = 10 }: RecentActivityProps) {
     QIITA: { name: 'Qiita', color: 'bg-green-100 text-green-800' }
   }
 
-  if (loading) {
-    return (
-      <div className="space-y-3">
-        {Array.from({ length: 5 }, (_, i) => (
-          <div key={i} className="animate-pulse">
-            <div className="flex items-start space-x-3 p-4 bg-gray-50 rounded-lg">
-              <div className="w-12 h-12 bg-gray-300 rounded"></div>
-              <div className="flex-1 space-y-2">
-                <div className="h-4 bg-gray-300 rounded w-3/4"></div>
-                <div className="h-3 bg-gray-300 rounded w-1/2"></div>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="text-center py-8">
-        <div className="text-red-600 mb-4">{error}</div>
-        <button
-          onClick={fetchRecentActivity}
-          className="text-blue-600 hover:text-blue-800 text-sm"
-        >
-          再試行
-        </button>
-      </div>
-    )
-  }
 
   if (recentArticles.length === 0) {
     return (
