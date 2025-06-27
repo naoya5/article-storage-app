@@ -23,20 +23,20 @@ const platformConfig = {
   TWITTER: {
     name: "Twitter",
     color: "bg-blue-500",
-    textColor: "text-white dark:text-white",
-    bgColor: "bg-blue-600 dark:bg-blue-700"
+    textColor: "text-white",
+    bgColor: "bg-blue-600"
   },
   ZENN: {
     name: "Zenn",
     color: "bg-blue-600",
-    textColor: "text-white dark:text-white", 
-    bgColor: "bg-blue-600 dark:bg-blue-700"
+    textColor: "text-white", 
+    bgColor: "bg-blue-600"
   },
   QIITA: {
     name: "Qiita",
     color: "bg-green-500",
-    textColor: "text-white dark:text-white",
-    bgColor: "bg-green-600 dark:bg-green-700"
+    textColor: "text-white",
+    bgColor: "bg-green-600"
   }
 } as const
 
@@ -69,7 +69,7 @@ export function ArticleCard({ article, onGenresChange, onTagsChange, onBookmarkC
   }
   
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden">
+    <div className="bg-white  rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden">
       {/* サムネイル */}
       {article.thumbnail && !imageError ? (
         <div className="aspect-video w-full overflow-hidden relative">
@@ -84,7 +84,7 @@ export function ArticleCard({ article, onGenresChange, onTagsChange, onBookmarkC
         </div>
       ) : article.thumbnail && imageError ? (
         <div className="aspect-video w-full overflow-hidden relative bg-gray-100 flex items-center justify-center">
-          <div className="text-gray-600 dark:text-gray-400 text-center">
+          <div className="text-gray-600  text-center">
             <svg className="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
@@ -107,7 +107,7 @@ export function ArticleCard({ article, onGenresChange, onTagsChange, onBookmarkC
                 className={`p-1.5 rounded-full transition-colors ${
                   isBookmarked
                     ? 'text-yellow-500 hover:text-yellow-600'
-                    : 'text-gray-600 dark:text-gray-400 hover:text-yellow-500'
+                    : 'text-gray-600  hover:text-yellow-500'
                 } disabled:opacity-50`}
                 title={isBookmarked ? 'ブックマークを削除' : 'ブックマークに追加'}
               >
@@ -126,7 +126,7 @@ export function ArticleCard({ article, onGenresChange, onTagsChange, onBookmarkC
                 </svg>
               </button>
             )}
-            <time className="text-xs text-gray-700 dark:text-gray-300">
+            <time className="text-xs text-gray-700 ">
               {formatDistanceToNow(new Date(article.createdAt), { 
                 addSuffix: true, 
                 locale: ja 
@@ -136,7 +136,7 @@ export function ArticleCard({ article, onGenresChange, onTagsChange, onBookmarkC
         </div>
 
         {/* タイトル */}
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 line-clamp-2">
+        <h3 className="text-lg font-semibold text-gray-900  mb-2 line-clamp-2">
           <a
             href={article.url}
             target="_blank"
@@ -149,7 +149,7 @@ export function ArticleCard({ article, onGenresChange, onTagsChange, onBookmarkC
 
         {/* 説明 */}
         {article.description && (
-          <p className="text-gray-700 dark:text-gray-300 text-sm mb-3 line-clamp-3">
+          <p className="text-gray-700  text-sm mb-3 line-clamp-3">
             {article.description}
           </p>
         )}
@@ -157,7 +157,7 @@ export function ArticleCard({ article, onGenresChange, onTagsChange, onBookmarkC
         {/* ジャンル */}
         {onGenresChange && (
           <div className="mb-3">
-            <div className="text-xs text-gray-700 dark:text-gray-300 mb-1">ジャンル</div>
+            <div className="text-xs text-gray-700  mb-1">ジャンル</div>
             <ArticleGenreSelector
               articleId={article.id}
               currentGenres={article.articleGenres || []}
@@ -169,7 +169,7 @@ export function ArticleCard({ article, onGenresChange, onTagsChange, onBookmarkC
         {/* タグ */}
         {onTagsChange && (
           <div className="mb-3">
-            <div className="text-xs text-gray-700 dark:text-gray-300 mb-1">タグ</div>
+            <div className="text-xs text-gray-700  mb-1">タグ</div>
             <ArticleTagSelector
               articleId={article.id}
               currentTags={article.articleTags || []}
@@ -181,7 +181,7 @@ export function ArticleCard({ article, onGenresChange, onTagsChange, onBookmarkC
         {/* 読書ステータス */}
         {isBookmarked && article.bookmarks?.[0] && (
           <div className="mb-3">
-            <div className="text-xs text-gray-700 dark:text-gray-300 mb-1">読書ステータス</div>
+            <div className="text-xs text-gray-700  mb-1">読書ステータス</div>
             <ReadStatusSelector
               bookmarkId={article.bookmarks[0].id}
               currentStatus={article.bookmarks[0].readStatus}
@@ -193,7 +193,7 @@ export function ArticleCard({ article, onGenresChange, onTagsChange, onBookmarkC
         {/* 評価 */}
         {isBookmarked && article.bookmarks?.[0] && (
           <div className="mb-3">
-            <div className="text-xs text-gray-700 dark:text-gray-300 mb-1">評価</div>
+            <div className="text-xs text-gray-700  mb-1">評価</div>
             <RatingSelector
               bookmarkId={article.bookmarks[0].id}
               currentRating={article.bookmarks[0].rating}
@@ -214,7 +214,7 @@ export function ArticleCard({ article, onGenresChange, onTagsChange, onBookmarkC
         )}
 
         {/* 著者と公開日 */}
-        <div className="flex items-center justify-between text-xs text-gray-700 dark:text-gray-300">
+        <div className="flex items-center justify-between text-xs text-gray-700 ">
           {article.author && (
             <span>by {article.author}</span>
           )}

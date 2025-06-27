@@ -1,15 +1,241 @@
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { cache, cacheKeys } from "@/lib/cache"
 import { redirect } from "next/navigation"
 import { DashboardTabs } from "./dashboard-tabs"
 import type { Genre, Tag } from "@/types/api"
 
+interface StatsData {
+  basic: {
+    totalArticles: number
+    totalBookmarks: number
+    totalGenres: number
+    totalTags: number
+    monthlyArticles: number
+    weeklyArticles: number
+    favoriteRate: number
+  }
+  platforms: Array<{
+    platform: string
+    count: number
+  }>
+  readStatus: Array<{
+    status: string
+    count: number
+  }>
+  ratings: Array<{
+    rating: number
+    count: number
+  }>
+  genres: Array<{
+    id: string
+    name: string
+    color: string
+    count: number
+  }>
+  tags: Array<{
+    id: string
+    name: string
+    count: number
+  }>
+  activity: Record<string, number>
+}
+
 export const dynamic = "force-dynamic"
+
+async function getStatsData(userId: string): Promise<StatsData | null> {
+  try {
+    // キャッシュをチェック
+    const cacheKey = cacheKeys.stats(userId)
+    const cachedStats = cache.get(cacheKey)
+    if (cachedStats) {
+      return cachedStats as StatsData
+    }
+
+    // 基本統計
+    const [
+      totalArticles,
+      totalBookmarks,
+      totalGenres,
+      totalTags,
+      monthlyArticles,
+      weeklyArticles
+    ] = await Promise.all([
+      // 総記事数
+      prisma.article.count({ where: { userId } }),
+      
+      // 総ブックマーク数
+      prisma.bookmark.count({ where: { userId } }),
+      
+      // 総ジャンル数
+      prisma.genre.count({ where: { userId } }),
+      
+      // 総タグ数
+      prisma.tag.count({ where: { userId } }),
+      
+      // 今月の記事数
+      prisma.article.count({
+        where: {
+          userId,
+          createdAt: {
+            gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+          }
+        }
+      }),
+      
+      // 今週の記事数
+      prisma.article.count({
+        where: {
+          userId,
+          createdAt: {
+            gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+          }
+        }
+      })
+    ])
+
+    // プラットフォーム別統計
+    const platformStats = await prisma.article.groupBy({
+      by: ['platform'],
+      where: { userId },
+      _count: { platform: true }
+    })
+
+    // 読書ステータス別統計
+    const readStatusStats = await prisma.bookmark.groupBy({
+      by: ['readStatus'],
+      where: { userId },
+      _count: { readStatus: true }
+    })
+
+    // 評価別統計
+    const ratingStats = await prisma.bookmark.groupBy({
+      by: ['rating'],
+      where: {
+        userId,
+        rating: { not: null }
+      },
+      _count: { rating: true }
+    })
+
+    // ジャンル別記事数（上位10件）
+    const genreStats = await prisma.genre.findMany({
+      where: { userId },
+      include: {
+        articleGenres: {
+          include: {
+            article: true
+          }
+        }
+      },
+      orderBy: {
+        articleGenres: {
+          _count: 'desc'
+        }
+      },
+      take: 10
+    })
+
+    // タグ別記事数（上位10件）
+    const tagStats = await prisma.tag.findMany({
+      where: { userId },
+      include: {
+        articleTags: {
+          include: {
+            article: true
+          }
+        }
+      },
+      orderBy: {
+        articleTags: {
+          _count: 'desc'
+        }
+      },
+      take: 10
+    })
+
+    // 最近の活動（過去30日間の日別記事追加数）
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+    const recentActivity = await prisma.article.findMany({
+      where: {
+        userId,
+        createdAt: {
+          gte: thirtyDaysAgo
+        }
+      },
+      select: {
+        createdAt: true
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    })
+
+    // 日別にグループ化
+    const activityByDate = recentActivity.reduce((acc, article) => {
+      const date = article.createdAt.toISOString().split('T')[0]
+      acc[date] = (acc[date] || 0) + 1
+      return acc
+    }, {} as Record<string, number>)
+
+    // お気に入り率
+    const favoriteRate = totalBookmarks > 0 
+      ? await prisma.bookmark.count({
+          where: { userId, isFavorite: true }
+        }).then(count => Math.round((count / totalBookmarks) * 100))
+      : 0
+
+    const statsData = {
+      basic: {
+        totalArticles,
+        totalBookmarks,
+        totalGenres,
+        totalTags,
+        monthlyArticles,
+        weeklyArticles,
+        favoriteRate
+      },
+      platforms: platformStats.map(stat => ({
+        platform: stat.platform,
+        count: stat._count.platform
+      })),
+      readStatus: readStatusStats.map(stat => ({
+        status: stat.readStatus,
+        count: stat._count.readStatus
+      })),
+      ratings: ratingStats.map(stat => ({
+        rating: stat.rating || 0,
+        count: stat._count.rating
+      })),
+      genres: genreStats.map(genre => ({
+        id: genre.id,
+        name: genre.name,
+        color: genre.color,
+        count: genre.articleGenres.length
+      })),
+      tags: tagStats.map(tag => ({
+        id: tag.id,
+        name: tag.name,
+        count: tag.articleTags.length
+      })),
+      activity: activityByDate
+    }
+    
+    // キャッシュに保存（10分間）
+    cache.set(cacheKey, statsData, 10 * 60 * 1000)
+
+    return statsData
+
+  } catch (error) {
+    console.error('Error fetching stats:', error)
+    return null
+  }
+}
 
 // Server Componentでデータフェッチング
 async function getDashboardData(userId: string) {
-  const [genres, tags, stats] = await Promise.all([
+  const [genres, tags, stats, recentArticles] = await Promise.all([
     // ジャンル取得
     prisma.genre.findMany({
       where: { userId },
@@ -23,27 +249,29 @@ async function getDashboardData(userId: string) {
     }),
     
     // 統計情報取得
-    Promise.all([
-      prisma.article.count({ where: { userId } }),
-      prisma.article.count({
-        where: {
-          userId,
-          createdAt: {
-            gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+    getStatsData(userId),
+    
+    // 最近の記事取得
+    prisma.article.findMany({
+      where: { userId },
+      include: {
+        articleGenres: {
+          include: {
+            genre: true
           }
+        },
+        articleTags: {
+          include: {
+            tag: true
+          }
+        },
+        bookmarks: {
+          where: { userId }
         }
-      }),
-      prisma.bookmark.count({
-        where: {
-          userId,
-          isFavorite: true
-        }
-      })
-    ]).then(([total, monthly, bookmarked]) => ({
-      totalArticles: total,
-      monthlyArticles: monthly,
-      bookmarkedArticles: bookmarked
-    }))
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 10
+    })
   ])
 
   return {
@@ -56,7 +284,36 @@ async function getDashboardData(userId: string) {
       id: tag.id,
       name: tag.name
     })) as Tag[],
-    stats
+    stats,
+    recentArticles: recentArticles.map(article => ({
+      id: article.id,
+      title: article.title,
+      description: article.description,
+      url: article.url,
+      thumbnail: article.thumbnail,
+      author: article.author,
+      platform: article.platform,
+      createdAt: article.createdAt,
+      updatedAt: article.updatedAt,
+      articleGenres: article.articleGenres.map(ag => ({
+        id: ag.articleId + ag.genreId, // 複合キーとしてIDを生成
+        genreId: ag.genreId,
+        genre: {
+          id: ag.genre.id,
+          name: ag.genre.name,
+          color: ag.genre.color
+        }
+      })),
+      articleTags: article.articleTags.map(at => ({
+        id: at.articleId + at.tagId, // 複合キーとしてIDを生成
+        tagId: at.tagId,
+        tag: {
+          id: at.tag.id,
+          name: at.tag.name
+        }
+      })),
+      bookmarks: article.bookmarks
+    }))
   }
 }
 
@@ -67,7 +324,7 @@ export default async function DashboardPage() {
     redirect("/")
   }
 
-  const { genres, tags, stats } = await getDashboardData(session.user.id)
+  const { genres, tags, stats, recentArticles } = await getDashboardData(session.user.id)
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -88,34 +345,9 @@ export default async function DashboardPage() {
           initialGenres={genres}
           initialTags={tags}
           session={session}
+          statsData={stats}
+          recentArticles={recentArticles}
         />
-
-        {/* 統計情報 - Server Component */}
-        <div className="mt-8 grid md:grid-cols-3 gap-6">
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              総記事数
-            </h3>
-            <p className="text-3xl font-bold text-blue-600">{stats.totalArticles}</p>
-            <p className="text-sm text-gray-500">登録済み記事</p>
-          </div>
-
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              今月追加
-            </h3>
-            <p className="text-3xl font-bold text-green-600">{stats.monthlyArticles}</p>
-            <p className="text-sm text-gray-500">今月の新規追加</p>
-          </div>
-
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              お気に入り
-            </h3>
-            <p className="text-3xl font-bold text-purple-600">{stats.bookmarkedArticles}</p>
-            <p className="text-sm text-gray-500">ブックマーク済み</p>
-          </div>
-        </div>
       </main>
     </div>
   )
