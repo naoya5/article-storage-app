@@ -84,14 +84,14 @@ export function DashboardTabs({ initialGenres, initialTags, statsData, recentArt
   return (
     <>
       {/* タブナビゲーション */}
-      <div className="flex space-x-1 mb-6 bg-gray-100 p-1 rounded-lg overflow-x-auto scrollbar-hide"
+      <div className="flex space-x-1 mb-6 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg overflow-x-auto scrollbar-hide"
            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
         <button
           onClick={() => setActiveTab("articles")}
           className={`px-3 sm:px-4 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
             activeTab === "articles"
-              ? "bg-white text-gray-900 shadow-sm"
-              : "text-gray-600 hover:text-gray-900"
+              ? "bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm"
+              : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
           }`}
         >
           記事管理
@@ -100,8 +100,8 @@ export function DashboardTabs({ initialGenres, initialTags, statsData, recentArt
           onClick={() => setActiveTab("genres")}
           className={`px-3 sm:px-4 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
             activeTab === "genres"
-              ? "bg-white text-gray-900 shadow-sm"
-              : "text-gray-600 hover:text-gray-900"
+              ? "bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm"
+              : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
           }`}
         >
           ジャンル管理
@@ -110,8 +110,8 @@ export function DashboardTabs({ initialGenres, initialTags, statsData, recentArt
           onClick={() => setActiveTab("tags")}
           className={`px-3 sm:px-4 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
             activeTab === "tags"
-              ? "bg-white text-gray-900 shadow-sm"
-              : "text-gray-600 hover:text-gray-900"
+              ? "bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm"
+              : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
           }`}
         >
           タグ管理
@@ -120,8 +120,8 @@ export function DashboardTabs({ initialGenres, initialTags, statsData, recentArt
           onClick={() => setActiveTab("stats")}
           className={`px-3 sm:px-4 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
             activeTab === "stats"
-              ? "bg-white text-gray-900 shadow-sm"
-              : "text-gray-600 hover:text-gray-900"
+              ? "bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm"
+              : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
           }`}
         >
           統計情報
