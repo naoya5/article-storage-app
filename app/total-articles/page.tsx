@@ -5,6 +5,8 @@ import { prisma } from "@/lib/prisma"
 import { cache, cacheKeys } from "@/lib/cache"
 import { redirect } from "next/navigation"
 
+export const dynamic = 'force-dynamic'
+
 interface StatsData {
   basic: {
     totalArticles: number
@@ -222,7 +224,7 @@ async function getStatsData(): Promise<StatsData | null> {
         count: stat._count.readStatus
       })),
       ratings: ratingStats.map(stat => ({
-        rating: stat.rating,
+        rating: stat.rating || 0,
         count: stat._count.rating
       })),
       genres: genreStats.map(genre => ({

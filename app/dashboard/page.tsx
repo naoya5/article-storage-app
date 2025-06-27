@@ -296,6 +296,8 @@ async function getDashboardData(userId: string) {
       createdAt: article.createdAt,
       updatedAt: article.updatedAt,
       articleGenres: article.articleGenres.map(ag => ({
+        id: ag.articleId + ag.genreId, // 複合キーとしてIDを生成
+        genreId: ag.genreId,
         genre: {
           id: ag.genre.id,
           name: ag.genre.name,
@@ -303,6 +305,8 @@ async function getDashboardData(userId: string) {
         }
       })),
       articleTags: article.articleTags.map(at => ({
+        id: at.articleId + at.tagId, // 複合キーとしてIDを生成
+        tagId: at.tagId,
         tag: {
           id: at.tag.id,
           name: at.tag.name

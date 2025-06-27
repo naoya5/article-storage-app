@@ -60,7 +60,7 @@ export function RatingSelector({
                 p-0.5 transition-colors
                 ${shouldHighlight 
                   ? 'text-yellow-500' 
-                  : 'text-gray-400 dark:text-gray-600 hover:text-yellow-400'
+                  : 'text-gray-400 hover:text-yellow-400'
                 }
                 ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
               `}
@@ -89,7 +89,7 @@ export function RatingSelector({
           onClick={() => handleRatingChange(null)}
           disabled={isDisabled}
           className={`
-            ml-2 text-xs text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 underline
+            ml-2 text-xs text-gray-700 hover:text-gray-900 underline
             ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
           `}
           title="評価をクリア"
