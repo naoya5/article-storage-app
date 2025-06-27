@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo, useCallback } from "react"
+import { GenreSelector, TagSelector, PlatformSelector } from "./search-bar/"
 import type { SearchFilters, Genre, Tag } from "@/types/api"
 
 interface SearchBarProps {
@@ -24,12 +25,12 @@ export function SearchBar({
   const [dateTo, setDateTo] = useState('')
   const [showFilters, setShowFilters] = useState(false)
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = useCallback((e: React.FormEvent) => {
     e.preventDefault()
     onSearch({ query, platform, genreId, tagId, dateFrom, dateTo })
-  }
+  }, [onSearch, query, platform, genreId, tagId, dateFrom, dateTo])
 
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
     setQuery('')
     setPlatform('')
     setGenreId('')
@@ -37,9 +38,17 @@ export function SearchBar({
     setDateFrom('')
     setDateTo('')
     onSearch({ query: '', platform: '', genreId: '', tagId: '', dateFrom: '', dateTo: '' })
-  }
+  }, [onSearch])
 
-  const hasFilters = platform || genreId || tagId || dateFrom || dateTo
+  const hasFilters = useMemo(() => 
+    Boolean(platform || genreId || tagId || dateFrom || dateTo), 
+    [platform, genreId, tagId, dateFrom, dateTo]
+  )
+
+  const filterCount = useMemo(() => 
+    [platform, genreId, tagId, dateFrom, dateTo].filter(Boolean).length,
+    [platform, genreId, tagId, dateFrom, dateTo]
+  )
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6 mb-6">
@@ -66,7 +75,7 @@ export function SearchBar({
                 : 'bg-gray-100 text-gray-800 border border-gray-200 hover:bg-gray-200'
             }`}
           >
-            フィルター {hasFilters && `(${[platform, genreId, tagId, dateFrom, dateTo].filter(Boolean).length})`}
+            フィルター {hasFilters && `(${filterCount})`}
           </button>
           <button
             type="submit"
@@ -81,63 +90,23 @@ export function SearchBar({
         {showFilters && (
           <div className="space-y-4 pt-4 border-t border-gray-200">
             <div className="grid md:grid-cols-3 gap-4">
-            {/* プラットフォーム */}
-            <div>
-              <label className="block text-sm font-medium text-gray-800 mb-1">
-                プラットフォーム
-              </label>
-              <select
+              <PlatformSelector
                 value={platform}
-                onChange={(e) => setPlatform(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                onChange={setPlatform}
                 disabled={loading}
-              >
-                <option value="">すべて</option>
-                <option value="TWITTER">Twitter</option>
-                <option value="ZENN">Zenn</option>
-                <option value="QIITA">Qiita</option>
-              </select>
-            </div>
-
-            {/* ジャンル */}
-            <div>
-              <label className="block text-sm font-medium text-gray-800 mb-1">
-                ジャンル
-              </label>
-              <select
+              />
+              <GenreSelector
                 value={genreId}
-                onChange={(e) => setGenreId(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                onChange={setGenreId}
+                genres={availableGenres}
                 disabled={loading}
-              >
-                <option value="">すべて</option>
-                {availableGenres.map((genre) => (
-                  <option key={genre.id} value={genre.id}>
-                    {genre.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* タグ */}
-            <div>
-              <label className="block text-sm font-medium text-gray-800 mb-1">
-                タグ
-              </label>
-              <select
+              />
+              <TagSelector
                 value={tagId}
-                onChange={(e) => setTagId(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                onChange={setTagId}
+                tags={availableTags}
                 disabled={loading}
-              >
-                <option value="">すべて</option>
-                {availableTags.map((tag) => (
-                  <option key={tag.id} value={tag.id}>
-                    #{tag.name}
-                  </option>
-                ))}
-              </select>
-            </div>
+              />
             </div>
 
             {/* 日付範囲フィルター */}
