@@ -138,8 +138,8 @@ export function DashboardTabs({ initialGenres, initialTags, statsData, recentArt
 
           {/* メインコンテンツエリア */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-semibold mb-6">記事一覧</h2>
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+              <h2 className="text-xl font-semibold mb-6 text-gray-900 dark:text-white">記事一覧</h2>
               <ArticleList 
                 refreshKey={refreshKey}
                 initialGenres={initialGenres}
@@ -149,27 +149,27 @@ export function DashboardTabs({ initialGenres, initialTags, statsData, recentArt
           </div>
         </div>
       ) : activeTab === "genres" ? (
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
           <GenreManager refreshKey={refreshKey} />
         </div>
       ) : activeTab === "tags" ? (
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
           <TagManager refreshKey={refreshKey} />
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
           {/* 統計ダッシュボード */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
-              <h2 className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6">統計ダッシュボード</h2>
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 sm:p-6">
+              <h2 className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6 text-gray-900 dark:text-white">統計ダッシュボード</h2>
               <StatsDashboard stats={statsData} />
             </div>
           </div>
 
           {/* 最近の活動 */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
-              <h2 className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6">最近の活動</h2>
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 sm:p-6">
+              <h2 className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6 text-gray-900 dark:text-white">最近の活動</h2>
               <RecentActivity articles={recentArticles} limit={10} />
             </div>
           </div>
