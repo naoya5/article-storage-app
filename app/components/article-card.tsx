@@ -93,9 +93,9 @@ export function ArticleCard({ article, onGenresChange, onTagsChange, onBookmarkC
         </div>
       ) : null}
       
-      <div className="p-6">
+      <div className="p-6 space-y-4">
         {/* プラットフォームバッジとブックマークボタン */}
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center justify-between">
           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${platform.textColor} ${platform.bgColor}`}>
             {platform.name}
           </span>
@@ -136,7 +136,7 @@ export function ArticleCard({ article, onGenresChange, onTagsChange, onBookmarkC
         </div>
 
         {/* タイトル */}
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white line-clamp-2">
           <a
             href={article.url}
             target="_blank"
@@ -149,15 +149,15 @@ export function ArticleCard({ article, onGenresChange, onTagsChange, onBookmarkC
 
         {/* 説明 */}
         {article.description && (
-          <p className="text-gray-700 dark:text-gray-300 text-sm mb-3 line-clamp-3">
+          <p className="text-gray-700 dark:text-gray-300 text-sm line-clamp-3">
             {article.description}
           </p>
         )}
 
         {/* ジャンル */}
         {onGenresChange && (
-          <div className="mb-3">
-            <div className="text-xs text-gray-700 dark:text-gray-300 mb-1">ジャンル</div>
+          <div className="space-y-2">
+            <div className="text-xs text-gray-700 dark:text-gray-300">ジャンル</div>
             <ArticleGenreSelector
               articleId={article.id}
               currentGenres={article.articleGenres || []}
@@ -168,8 +168,8 @@ export function ArticleCard({ article, onGenresChange, onTagsChange, onBookmarkC
 
         {/* タグ */}
         {onTagsChange && (
-          <div className="mb-3">
-            <div className="text-xs text-gray-700 dark:text-gray-300 mb-1">タグ</div>
+          <div className="space-y-2">
+            <div className="text-xs text-gray-700 dark:text-gray-300">タグ</div>
             <ArticleTagSelector
               articleId={article.id}
               currentTags={article.articleTags || []}
@@ -180,8 +180,8 @@ export function ArticleCard({ article, onGenresChange, onTagsChange, onBookmarkC
 
         {/* 読書ステータス */}
         {isBookmarked && article.bookmarks?.[0] && (
-          <div className="mb-3">
-            <div className="text-xs text-gray-700 dark:text-gray-300 mb-1">読書ステータス</div>
+          <div className="space-y-2">
+            <div className="text-xs text-gray-700 dark:text-gray-300">読書ステータス</div>
             <ReadStatusSelector
               bookmarkId={article.bookmarks[0].id}
               currentStatus={article.bookmarks[0].readStatus}
@@ -192,8 +192,8 @@ export function ArticleCard({ article, onGenresChange, onTagsChange, onBookmarkC
 
         {/* 評価 */}
         {isBookmarked && article.bookmarks?.[0] && (
-          <div className="mb-3">
-            <div className="text-xs text-gray-700 dark:text-gray-300 mb-1">評価</div>
+          <div className="space-y-2">
+            <div className="text-xs text-gray-700 dark:text-gray-300">評価</div>
             <RatingSelector
               bookmarkId={article.bookmarks[0].id}
               currentRating={article.bookmarks[0].rating}
@@ -204,7 +204,7 @@ export function ArticleCard({ article, onGenresChange, onTagsChange, onBookmarkC
 
         {/* メモ */}
         {isBookmarked && article.bookmarks?.[0] && (
-          <div className="mb-3">
+          <div>
             <MemoEditor
               bookmarkId={article.bookmarks[0].id}
               currentMemo={article.bookmarks[0].memo}

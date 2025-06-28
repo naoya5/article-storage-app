@@ -15,8 +15,8 @@ export function AddArticleForm({ onArticleAdded }: AddArticleFormProps) {
 
   if (!session) {
     return (
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <p className="text-blue-700">記事を追加するにはログインが必要です。</p>
+      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+        <p className="text-blue-700 dark:text-blue-300">記事を追加するにはログインが必要です。</p>
       </div>
     )
   }
@@ -86,12 +86,12 @@ export function AddArticleForm({ onArticleAdded }: AddArticleFormProps) {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-xl font-semibold mb-4">記事を追加</h2>
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-gray-900/20 p-6 space-y-6">
+      <h2 className="text-xl font-semibold text-gray-900 dark:text-white">記事を追加</h2>
       
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label htmlFor="url" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="url" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             記事URL
           </label>
           <input
@@ -100,16 +100,16 @@ export function AddArticleForm({ onArticleAdded }: AddArticleFormProps) {
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             placeholder="https://zenn.dev/username/articles/article-title"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400"
             disabled={isLoading}
           />
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
             対応プラットフォーム：
             <span className="font-medium">Twitter(X)</span>、
             <span className="font-medium">Zenn</span>、
             <span className="font-medium">Qiita</span>
           </p>
-          <p className="text-xs text-gray-400 mt-1">
+          <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
             例：https://zenn.dev/author/articles/title
           </p>
         </div>
@@ -117,7 +117,7 @@ export function AddArticleForm({ onArticleAdded }: AddArticleFormProps) {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {isLoading ? (
             <div className="flex items-center justify-center">
@@ -131,10 +131,10 @@ export function AddArticleForm({ onArticleAdded }: AddArticleFormProps) {
       </form>
 
       {message && (
-        <div className={`mt-4 p-4 rounded-md ${
+        <div className={`p-4 rounded-md border ${
           message.type === 'success' 
-            ? 'bg-green-50 border border-green-200 text-green-700' 
-            : 'bg-red-50 border border-red-200 text-red-700'
+            ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 text-green-700 dark:text-green-300' 
+            : 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 text-red-700 dark:text-red-300'
         }`}>
           {message.text}
         </div>
