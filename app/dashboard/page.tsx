@@ -329,28 +329,28 @@ export default async function DashboardPage() {
   const { genres, tags, stats, recentArticles } = await getDashboardData(session.user.id)
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
-      <header className="border-b bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-gray-200 dark:border-gray-700">
+    <div className="min-h-screen bg-gradient-to-br from-secondary to-background dark:from-gray-900 dark:to-gray-800">
+      <header className="border-b bg-background/90 dark:bg-gray-900/90 backdrop-blur-sm border-border dark:border-gray-700">
         <div className="max-w-6xl mx-auto px-6 py-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-4">
               <Link 
                 href="/" 
-                className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-sm font-medium transition-colors"
+                className="text-primary hover:text-primary/80 text-sm font-medium transition-colors"
               >
                 ← ホーム
               </Link>
-              <div className="h-6 w-px bg-gray-300 dark:bg-gray-600"></div>
+              <div className="h-6 w-px bg-border dark:bg-gray-600"></div>
               <Link 
                 href="/articles" 
-                className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-sm font-medium transition-colors"
+                className="text-primary hover:text-primary/80 text-sm font-medium transition-colors"
               >
                 記事一覧
               </Link>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">ダッシュボード</h1>
+              <h1 className="text-2xl font-bold text-foreground">ダッシュボード</h1>
             </div>
             <div className="flex items-center gap-4">
-              <div className="text-sm text-gray-600 dark:text-gray-300">
+              <div className="text-sm text-muted-foreground">
                 ようこそ、{session.user?.name || session.user?.email}さん
               </div>
               <DarkModeToggle />
