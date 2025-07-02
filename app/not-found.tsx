@@ -22,7 +22,7 @@ export default function NotFound() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "#f9fafb",
+        backgroundColor: "#FCFCFC",
         fontFamily: "system-ui, -apple-system, sans-serif",
       }}
     >
@@ -67,7 +67,7 @@ export default function NotFound() {
             onClick={handleDashboardClick}
             style={{
               display: "inline-block",
-              backgroundColor: "#2563eb",
+              backgroundColor: "#F7567C",
               color: "white",
               padding: "12px 24px",
               borderRadius: "8px",
@@ -85,7 +85,7 @@ export default function NotFound() {
           <button
             onClick={handleHomeClick}
             style={{
-              color: "#2563eb",
+              color: "#F7567C",
               textDecoration: "none",
               fontWeight: "500",
               background: "none",
