@@ -9,6 +9,12 @@ export default function Home() {
         <div className="max-w-6xl mx-auto flex justify-between items-center">
           <h1 className="text-2xl font-bold text-foreground">記事ストックアプリ</h1>
           <div className="flex items-center gap-4">
+            <Link 
+              href="/landing" 
+              className="px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+            >
+              ランディングページ
+            </Link>
             <DarkModeToggle />
             <AuthButton />
           </div>
