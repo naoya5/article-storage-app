@@ -272,8 +272,8 @@ export default async function TotalArticlesPage() {
         </header>
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center py-12">
-            <div className="text-red-600 mb-4">統計データの取得に失敗しました</div>
-            <Link href="/total-articles" className="text-blue-600 hover:text-blue-800">
+            <div className="text-destructive mb-4">統計データの取得に失敗しました</div>
+            <Link href="/total-articles" className="text-primary hover:text-primary/80">
               再読み込み
             </Link>
           </div>
