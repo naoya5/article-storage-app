@@ -1,18 +1,18 @@
-"use client"
+"use client";
 
-import { useSession, signIn, signOut } from "next-auth/react"
-import Image from "next/image"
-import Link from "next/link"
+import { useSession, signIn, signOut } from "next-auth/react";
+import Image from "next/image";
+import Link from "next/link";
 
 export function AuthButton() {
-  const { data: session, status } = useSession()
+  const { data: session, status } = useSession();
 
   if (status === "loading") {
     return (
       <div className="flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
       </div>
-    )
+    );
   }
 
   if (session) {
@@ -34,7 +34,7 @@ export function AuthButton() {
         </div>
         <Link
           href="/dashboard"
-          className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          className="px-4 py-2 text-sm font-medium text-white bg-primary border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         >
           ダッシュボード
         </Link>
@@ -45,7 +45,7 @@ export function AuthButton() {
           サインアウト
         </button>
       </div>
-    )
+    );
   }
 
   return (
@@ -63,5 +63,5 @@ export function AuthButton() {
         GitHubでサインイン
       </button>
     </div>
-  )
+  );
 }
