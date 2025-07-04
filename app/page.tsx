@@ -120,7 +120,15 @@ export default function Home() {
           </div>
 
           {/* Quick Access Cards */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mt-20">
+          <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6 mt-20">
+            <Link href="/add-article" className="block bg-gradient-to-br from-secondary to-secondary/80 dark:from-primary/20 dark:to-primary/10 p-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 border border-primary/30 hover:border-primary/50 group">
+              <div className="text-3xl mb-4 group-hover:scale-110 transition-transform duration-300">📝</div>
+              <h3 className="text-lg font-semibold mb-2 text-card-foreground">記事追加</h3>
+              <p className="text-muted-foreground text-sm">
+                新しい記事をプレビューしながら簡単に追加できます。
+              </p>
+            </Link>
+            
             <Link href="/total-articles" className="block bg-card p-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 border border-border hover:border-primary/50">
               <div className="text-3xl mb-4">📊</div>
               <h3 className="text-lg font-semibold mb-2 text-card-foreground">総記事数</h3>
@@ -167,6 +175,7 @@ export default function Home() {
             <div>
               <h4 className="font-semibold mb-4">機能</h4>
               <ul className="space-y-2 text-muted-foreground">
+                <li><Link href="/add-article" className="hover:text-primary transition-colors">記事追加</Link></li>
                 <li><Link href="/articles" className="hover:text-primary transition-colors">記事一覧</Link></li>
                 <li><Link href="/dashboard" className="hover:text-primary transition-colors">ダッシュボード</Link></li>
                 <li><Link href="/favorites" className="hover:text-primary transition-colors">お気に入り</Link></li>
