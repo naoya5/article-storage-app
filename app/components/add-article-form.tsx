@@ -4,7 +4,12 @@ import { useState } from "react"
 import { useSession } from "next-auth/react"
 
 interface AddArticleFormProps {
-  onArticleAdded?: () => void
+  /**
+   * Callback invoked when an article has been successfully added.
+   * The newly created `Article` object as returned from the API is passed
+   * to the callback. Consumers that don't need the article can ignore the argument.
+   */
+  onArticleAdded?: (article: any) => void // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 export function AddArticleForm({ onArticleAdded }: AddArticleFormProps) {
@@ -73,7 +78,7 @@ export function AddArticleForm({ onArticleAdded }: AddArticleFormProps) {
         text: `記事「${data.article.title}」を追加しました` 
       })
       setUrl("")
-      onArticleAdded?.()
+      onArticleAdded?.(data.article)
 
     } catch (error) {
       setMessage({ 
