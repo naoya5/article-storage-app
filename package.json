@@ -16,14 +16,20 @@
     "db:studio": "prisma studio"
   },
   "dependencies": {
+    "@radix-ui/react-slot": "^1.2.3",
+    "@radix-ui/react-switch": "^1.2.5",
+    "class-variance-authority": "^0.7.1",
+    "lucide-react": "^0.524.0",
     "next": "^14.0.0",
+    "next-auth": "^4.24.0",
+    "next-themes": "^0.4.6",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "next-auth": "^4.24.0"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@types/node": "^20.0.0",
-    "@types/react": "^18.2.0",
-    "@types/react-dom": "^18.2.0"
+    "@types/node": "^24.0.10",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "typescript": "^5.8.3"
   }
 }
