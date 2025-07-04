@@ -6,6 +6,7 @@ import { ArticleList } from "@/app/components/article-list"
 import { DarkModeToggle } from "@/app/components/dark-mode-toggle"
 import Link from "next/link"
 import type { Genre, Tag } from "@/types/api"
+import type { Session } from "next-auth"
 
 export const dynamic = "force-dynamic"
 
@@ -36,9 +37,9 @@ async function getFiltersData(userId: string) {
 }
 
 export default async function ArticlesPage() {
-  const session = await getServerSession(authOptions)
+  const session = (await getServerSession(authOptions)) as Session
 
-  if (!session?.user?.id) {
+  if (!session.user?.id) {
     redirect("/")
   }
 
