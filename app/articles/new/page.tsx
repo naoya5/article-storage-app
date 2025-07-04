@@ -4,6 +4,7 @@ import Link from "next/link"
 import { DarkModeToggle } from "@/app/components/dark-mode-toggle"
 import { AddArticleWithPreview } from "@/app/components/add-article-with-preview"
 import { authOptions } from "@/lib/auth"
+import * as React from "react"
 
 export const dynamic = "force-dynamic"
 
