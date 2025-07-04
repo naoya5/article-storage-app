@@ -31,22 +31,22 @@ class MemoryCache {
   // ユーザー関連のキャッシュをクリア
   clearUserCache(userId: string): void {
     const keysToDelete: string[] = []
-    for (const [key] of this.cache) {
+    this.cache.forEach((_, key) => {
       if (key.includes(userId)) {
         keysToDelete.push(key)
       }
-    }
+    })
     keysToDelete.forEach(key => this.cache.delete(key))
   }
 
   // 期限切れアイテムを定期的にクリーンアップ
   cleanup(): void {
     const now = Date.now()
-    for (const [key, item] of this.cache) {
+    this.cache.forEach((item, key) => {
       if (now > item.expires) {
         this.cache.delete(key)
       }
-    }
+    })
   }
 }
 

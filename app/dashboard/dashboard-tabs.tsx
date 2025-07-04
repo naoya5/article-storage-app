@@ -59,7 +59,10 @@ export function DashboardTabs({ initialGenres, initialTags, statsData, recentArt
   const [refreshKey, setRefreshKey] = useState(0)
   const [activeTab, setActiveTab] = useState<"articles" | "genres" | "tags" | "stats">("articles")
 
-  const handleArticleAdded = () => {
+  // `article` argument is provided but not used here; accepting it keeps the
+  // signature compatible with `AddArticleForm` without changing behaviour.
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleArticleAdded = (article?: Article) => {
     setRefreshKey((prev) => prev + 1)
   }
 
