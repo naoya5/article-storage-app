@@ -1,48 +1,18 @@
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
-import { prisma } from "@/lib/prisma"
 import { redirect } from "next/navigation"
-import { ArticleList } from "@/app/components/article-list"
 import { DarkModeToggle } from "@/app/components/dark-mode-toggle"
 import Link from "next/link"
-import type { Genre, Tag } from "@/types/api"
+import { AddArticleWithPreview } from "./components/add-article-with-preview"
 
 export const dynamic = "force-dynamic"
 
-// Server Componentでジャンルとタグを取得
-async function getFiltersData(userId: string) {
-  const [genres, tags] = await Promise.all([
-    prisma.genre.findMany({
-      where: { userId },
-      orderBy: { createdAt: 'desc' }
-    }),
-    prisma.tag.findMany({
-      where: { userId },
-      orderBy: { createdAt: 'desc' }
-    })
-  ])
-
-  return {
-    genres: genres.map(genre => ({
-      id: genre.id,
-      name: genre.name,
-      color: genre.color
-    })) as Genre[],
-    tags: tags.map(tag => ({
-      id: tag.id,
-      name: tag.name
-    })) as Tag[]
-  }
-}
-
-export default async function ArticlesPage() {
+export default async function AddArticlePage() {
   const session = await getServerSession(authOptions)
 
   if (!session?.user?.id) {
     redirect("/")
   }
-
-  const { genres, tags } = await getFiltersData(session.user.id)
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary to-background dark:from-gray-900 dark:to-gray-800">
@@ -58,12 +28,19 @@ export default async function ArticlesPage() {
               </Link>
               <div className="h-6 w-px bg-border dark:bg-gray-600"></div>
               <Link 
+                href="/articles" 
+                className="text-primary hover:text-primary/80 text-sm font-medium transition-colors"
+              >
+                記事一覧
+              </Link>
+              <div className="h-6 w-px bg-border dark:bg-gray-600"></div>
+              <Link 
                 href="/dashboard" 
                 className="text-primary hover:text-primary/80 text-sm font-medium transition-colors"
               >
                 ダッシュボード
               </Link>
-              <h1 className="text-2xl font-bold text-foreground">記事一覧</h1>
+              <h1 className="text-2xl font-bold text-foreground">記事追加</h1>
             </div>
             <div className="flex items-center gap-4">
               <div className="text-sm text-muted-foreground">
@@ -77,29 +54,15 @@ export default async function ArticlesPage() {
 
       <main className="max-w-6xl mx-auto px-6 py-8">
         <div className="mb-6">
-          <div className="flex justify-between items-start">
-            <div>
-              <h2 className="text-lg font-semibold text-foreground mb-2">
-                すべての記事
-              </h2>
-              <p className="text-muted-foreground">
-                保存した記事を検索・フィルタリングして管理できます。
-              </p>
-            </div>
-            <Link 
-              href="/add-article"
-              className="inline-flex items-center px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg font-medium transition-colors shadow-md hover:shadow-lg"
-            >
-              <span className="mr-2">📝</span>
-              記事を追加
-            </Link>
-          </div>
+          <h2 className="text-lg font-semibold text-foreground mb-2">
+            新しい記事を追加
+          </h2>
+          <p className="text-muted-foreground">
+            Twitter(X)、Zenn、QiitaのURLを入力して記事を追加できます。下部にリアルタイムプレビューが表示されます。
+          </p>
         </div>
 
-        <ArticleList 
-          initialGenres={genres}
-          initialTags={tags}
-        />
+        <AddArticleWithPreview />
       </main>
     </div>
   )
