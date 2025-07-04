@@ -1,9 +1,9 @@
 import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import { DarkModeToggle } from "@/app/components/dark-mode-toggle"
 import { AddArticleWithPreview } from "@/app/components/add-article-with-preview"
+import { authOptions } from "@/lib/auth"
 
 export const dynamic = "force-dynamic"
 

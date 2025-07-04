@@ -9,7 +9,7 @@ interface AddArticleFormProps {
    * The newly created `Article` object as returned from the API is passed
    * to the callback. Consumers that don't need the article can ignore the argument.
    */
-  onArticleAdded?: (article: any) => void // eslint-disable-line @typescript-eslint/no-explicit-any
+  onArticleAdded?: (article: import("@/types/api").Article) => void
 }
 
 export function AddArticleForm({ onArticleAdded }: AddArticleFormProps) {
@@ -78,7 +78,7 @@ export function AddArticleForm({ onArticleAdded }: AddArticleFormProps) {
         text: `記事「${data.article.title}」を追加しました` 
       })
       setUrl("")
-      onArticleAdded?.(data.article)
+      onArticleAdded?.(data.article as import("@/types/api").Article)
 
     } catch (error) {
       setMessage({ 

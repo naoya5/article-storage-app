@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import * as React from "react"
 import { AddArticleForm } from "./add-article-form"
 import { ArticleCard } from "./article-card"
 import type { Article } from "@/types/api"
@@ -10,7 +10,7 @@ import type { Article } from "@/types/api"
  * submission, renders a preview of the newly added article beneath the form.
  */
 export function AddArticleWithPreview() {
-  const [previewArticle, setPreviewArticle] = useState<Article | null>(null)
+  const [previewArticle, setPreviewArticle] = React.useState<Article | null>(null)
 
   const handleArticleAdded = (article: Article) => {
     setPreviewArticle(article)
