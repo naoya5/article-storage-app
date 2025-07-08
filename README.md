@@ -3,10 +3,12 @@
 Twitter(X)、Zenn、Qiitaから記事をストック・管理できるNext.jsアプリケーションです。記事をジャンルやタグで分類し、高機能な検索でお気に入りの記事をすばやく見つけることができます。
 
 ![Next.js](https://img.shields.io/badge/Next.js-15.3.4-black)
-![React](https://img.shields.io/badge/React-19-blue)
+![React](https://img.shields.io/badge/React-19.0.0-blue)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)
-![Prisma](https://img.shields.io/badge/Prisma-ORM-green)
+![Prisma](https://img.shields.io/badge/Prisma-5.18.0-green)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-cyan)
+![Vitest](https://img.shields.io/badge/Vitest-3.2.4-yellow)
+![NextAuth.js](https://img.shields.io/badge/NextAuth.js-4.24.11-orange)
 
 ## ✨ 主な機能
 
@@ -51,18 +53,21 @@ npm install
 
 ### 3. 環境変数の設定
 
-```bash
-cp .env.example .env.local
-```
-
-`.env.local` を編集して必要な環境変数を設定：
+`.env.local` ファイルを作成して以下の環境変数を設定：
 
 ```bash
+# Database
 DATABASE_URL="postgresql://..."
+
+# NextAuth.js
 NEXTAUTH_URL="http://localhost:3000"
 NEXTAUTH_SECRET="your-secret-key"
+
+# Google OAuth
 GOOGLE_CLIENT_ID="your-google-client-id"
 GOOGLE_CLIENT_SECRET="your-google-client-secret"
+
+# GitHub OAuth
 GITHUB_CLIENT_ID="your-github-client-id"
 GITHUB_CLIENT_SECRET="your-github-client-secret"
 ```
@@ -70,8 +75,14 @@ GITHUB_CLIENT_SECRET="your-github-client-secret"
 ### 4. データベースのセットアップ
 
 ```bash
-npx prisma migrate dev
+# Prisma クライアントの生成
 npx prisma generate
+
+# データベースマイグレーション
+npx prisma migrate dev
+
+# または既存のデータベースにプッシュ
+npx prisma db push
 ```
 
 ### 5. 開発サーバーの起動
@@ -81,6 +92,35 @@ npm run dev
 ```
 
 ブラウザで [http://localhost:3000](http://localhost:3000) を開く
+
+## 🧪 テスト実行
+
+```bash
+# 全テストの実行
+npm test
+
+# テストの監視モード
+npm run test:watch
+```
+
+## 🔧 開発コマンド
+
+```bash
+# 開発サーバー起動
+npm run dev
+
+# 本番ビルド
+npm run build
+
+# 本番サーバー起動  
+npm start
+
+# ESLint実行
+npm run lint
+
+# Prisma Studio（データベース管理）
+npm run db:studio
+```
 
 ## 📖 詳細なセットアップ
 
@@ -92,20 +132,25 @@ npm run dev
 ## 🛠️ 技術スタック
 
 ### フロントエンド
-- **Next.js 15** - React フレームワーク（App Router）
-- **React 19** - ユーザーインターフェース
-- **TypeScript** - 型安全な開発
+- **Next.js 15.3.4** - React フレームワーク（App Router）
+- **React 19.0.0** - ユーザーインターフェース
+- **TypeScript 5** - 型安全な開発
 - **Tailwind CSS v4** - モダンCSSフレームワーク
+- **Lucide React** - アイコンライブラリ
+- **Radix UI** - 高品質コンポーネント
 
 ### バックエンド
-- **NextAuth.js** - 認証システム
-- **Prisma** - データベースORM
+- **NextAuth.js 4.24.11** - 認証システム
+- **Prisma 5.18.0** - データベースORM
 - **PostgreSQL** - メインデータベース
+- **Cheerio** - サーバーサイドHTML解析
 
 ### 開発ツール
 - **ESLint** - コード品質管理
-- **Prettier** - コードフォーマッター（予定）
-- **Husky** - Git hooks（予定）
+- **Vitest 3.2.4** - 高速テストフレームワーク
+- **React Testing Library** - コンポーネントテスト
+- **PostCSS** - CSS後処理ツール
+- **TypeScript** - 型安全な開発環境
 
 ## 📂 プロジェクト構成
 
@@ -113,21 +158,27 @@ npm run dev
 article-storage-app/
 ├── app/                    # Next.js App Router
 │   ├── api/               # API Routes
-│   │   ├── auth/          # 認証API
+│   │   ├── auth/          # NextAuth.js認証
 │   │   ├── articles/      # 記事管理API
 │   │   ├── genres/        # ジャンル管理API
 │   │   └── tags/          # タグ管理API
 │   ├── components/        # Reactコンポーネント
+│   │   ├── ui/           # 再利用可能UIコンポーネント
+│   │   └── ...           # フィーチャー固有コンポーネント
 │   ├── dashboard/         # ダッシュボードページ
-│   └── globals.css        # グローバルスタイル
+│   ├── globals.css        # Tailwind CSSグローバルスタイル
+│   ├── layout.tsx         # ルートレイアウト
+│   └── page.tsx          # ホームページ
 ├── lib/                   # ユーティリティ関数
-│   ├── auth.ts           # 認証設定
-│   ├── prisma.ts         # データベース接続
+│   ├── auth.ts           # NextAuth.js設定
+│   ├── prisma.ts         # Prismaクライアント
 │   ├── platform-detector.ts  # プラットフォーム判定
 │   └── metadata-extractor.ts # メタデータ抽出
 ├── prisma/               # データベーススキーマ
 │   ├── schema.prisma     # Prismaスキーマ定義
 │   └── migrations/       # マイグレーションファイル
+├── __tests__/            # Vitestテストファイル
+├── CLAUDE.md            # Claude Code指示書
 ├── SETUP.md             # セットアップガイド
 ├── DEPLOYMENT.md        # デプロイメントガイド
 └── README.md           # このファイル
