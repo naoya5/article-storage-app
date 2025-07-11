@@ -7,6 +7,7 @@ import { DashboardTabs } from "./dashboard-tabs"
 import { DarkModeToggle } from "@/app/components/dark-mode-toggle"
 import type { Genre, Tag } from "@/types/api"
 import Link from "next/link"
+import type { Session } from "next-auth"
 
 interface StatsData {
   basic: {
@@ -320,9 +321,9 @@ async function getDashboardData(userId: string) {
 }
 
 export default async function DashboardPage() {
-  const session = await getServerSession(authOptions)
+  const session = (await getServerSession(authOptions)) as Session
 
-  if (!session?.user?.id) {
+  if (!session.user?.id) {
     redirect("/")
   }
 

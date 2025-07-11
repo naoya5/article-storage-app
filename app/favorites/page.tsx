@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { cache, cacheKeys } from "@/lib/cache"
 import { redirect } from "next/navigation"
+import type { Session } from "next-auth"
 
 export const dynamic = 'force-dynamic'
 
@@ -51,9 +52,9 @@ const readStatusConfig = {
 
 async function getStatsData(): Promise<StatsData | null> {
   try {
-    const session = await getServerSession(authOptions)
+    const session = (await getServerSession(authOptions)) as Session
     
-    if (!session?.user?.id) {
+    if (!session.user?.id) {
       redirect('/api/auth/signin')
     }
 
