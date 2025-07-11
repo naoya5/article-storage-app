@@ -77,12 +77,23 @@ export default async function ArticlesPage() {
 
       <main className="max-w-6xl mx-auto px-6 py-8">
         <div className="mb-6">
-          <h2 className="text-lg font-semibold text-foreground mb-2">
-            すべての記事
-          </h2>
-          <p className="text-muted-foreground">
-            保存した記事を検索・フィルタリングして管理できます。
-          </p>
+          <div className="flex justify-between items-start">
+            <div>
+              <h2 className="text-lg font-semibold text-foreground mb-2">
+                すべての記事
+              </h2>
+              <p className="text-muted-foreground">
+                保存した記事を検索・フィルタリングして管理できます。
+              </p>
+            </div>
+            <Link 
+              href="/add-article"
+              className="inline-flex items-center px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg font-medium transition-colors shadow-md hover:shadow-lg"
+            >
+              <span className="mr-2">📝</span>
+              記事を追加
+            </Link>
+          </div>
         </div>
 
         <ArticleList 
